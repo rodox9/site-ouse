@@ -179,10 +179,10 @@ a{color:inherit;text-decoration:none;}
 <script>
 /* ====== CONFIG · NOTIFICAÇÕES (grátis) ====== */
 // 1) E-MAIL via Web3Forms — pegue a access key grátis em https://web3forms.com (só informar um e-mail)
-const WEB3FORMS_KEY   = '';
+const WEB3FORMS_KEY   = '6894e59b-da65-4152-bb85-fc03193c11a5';
 // 2) WHATSAPP via CallMeBot — grátis para o seu número. https://www.callmebot.com/blog/free-api-whatsapp-messages/
-const WHATSAPP_PHONE  = '';   // ex.: 5541999998888  (DDI 55 + DDD + número)
-const WHATSAPP_APIKEY = '';   // chave que o CallMeBot envia no seu WhatsApp
+const WHATSAPP_PHONE  = '554195351000';   // DDI 55 + DDD + número
+const WHATSAPP_APIKEY = '7706708';        // chave do CallMeBot
 
 /* ====== ESTRUTURA · 7 etapas · 14 perguntas ====== */
 const STEPS = [
@@ -378,10 +378,18 @@ Desafio: ${L(answers.desafio)}`;
   } else { flag.style.display='none'; }
   idx=TOTAL+1; show(idx);
 
-  // 1) E-MAIL via Web3Forms
+  // 1) E-MAIL via Web3Forms (FormData = sem preflight CORS)
   if(WEB3FORMS_KEY){
-    fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
-      body:JSON.stringify({access_key:WEB3FORMS_KEY,subject:`🔥 Novo diagnóstico OUSE — ${answers.empresa||answers.nome||'lead'}`,from_name:'Site OUSE · Diagnóstico',email:answers.email,nome:answers.nome,empresa:answers.empresa,whatsapp:answers.whatsapp,resumo})}).catch(()=>{});
+    const fd=new FormData();
+    fd.append('access_key',WEB3FORMS_KEY);
+    fd.append('subject',`🔥 Novo diagnóstico OUSE — ${answers.empresa||answers.nome||'lead'}`);
+    fd.append('from_name','Site OUSE · Diagnóstico');
+    fd.append('email',answers.email||'');
+    fd.append('nome',answers.nome||'');
+    fd.append('empresa',answers.empresa||'');
+    fd.append('whatsapp',answers.whatsapp||'');
+    fd.append('resumo',resumo);
+    fetch('https://api.web3forms.com/submit',{method:'POST',body:fd}).catch(()=>{});
   }
   // 2) WHATSAPP via CallMeBot
   if(WHATSAPP_PHONE&&WHATSAPP_APIKEY){

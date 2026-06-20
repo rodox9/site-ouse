@@ -8,8 +8,15 @@ versionamento [SemVer](https://semver.org/lang/pt-BR/).
 > (push + tag), move-se o bloco para uma versão com data.
 
 ## [Não publicado]
-### Adicionado (aguardando chaves para ativar → vira v1.2.0)
-- Diagnóstico — integração de notificações no envio: **e-mail (Web3Forms)** + **WhatsApp (CallMeBot)**, com resumo formatado do lead. Falta preencher `WEB3FORMS_KEY` e `WHATSAPP_PHONE`/`WHATSAPP_APIKEY` em `diagnostico.html`.
+_(nada pendente)_
+
+---
+
+## [1.2.0] — 2026-06-20
+### Adicionado
+- Diagnóstico — **captação de leads ativa**: cada envio dispara **e-mail (Web3Forms)** + **WhatsApp (CallMeBot)** com resumo formatado do lead.
+  - WhatsApp **confirmado** em teste (CallMeBot · "Message queued").
+  - E-mail via Web3Forms **client-side com FormData** (evita preflight CORS). Validar no domínio real.
 
 ---
 
