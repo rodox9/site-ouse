@@ -186,10 +186,10 @@ const SUBMIT_ENDPOINT = '';
 const STEPS = [
   { area:'Identificação', label:'Quem é você', qs:[
     { id:'identificacao', type:'fields', q:'Qual seu nome e empresa?', fields:[
-      {name:'nome',label:'Nome',type:'text'},
-      {name:'empresa',label:'Empresa',type:'text'},
-      {name:'whatsapp',label:'WhatsApp',type:'tel'},
-      {name:'email',label:'E-mail',type:'email'},
+      {name:'nome',label:'Nome',type:'text',autocomplete:'name'},
+      {name:'empresa',label:'Empresa',type:'text',autocomplete:'organization'},
+      {name:'whatsapp',label:'WhatsApp',type:'tel',inputmode:'numeric',autocomplete:'tel',mask:'phone',ph:'(41) 99999-9999'},
+      {name:'email',label:'E-mail',type:'email',inputmode:'email',autocomplete:'email',ph:'voce@empresa.com.br'},
     ]},
     { id:'cargo', type:'radio', q:'Qual seu cargo ou função hoje?', opts:['Sócio / fundador','Diretor comercial','Diretor de marketing','Gestor comercial','Coordenador de vendas','Corretor líder','Outro'] },
   ]},
@@ -198,7 +198,7 @@ const STEPS = [
     { id:'porte', type:'radio', q:'Qual o porte da operação comercial?', opts:['Até 3 corretores','4 a 10 corretores','11 a 30 corretores','31 a 80 corretores','Mais de 80 corretores','Não temos equipe comercial estruturada'] },
   ]},
   { area:'Momento comercial', label:'Qual momento estão vivendo', qs:[
-    { id:'cenario', type:'radio', q:'Qual cenário descreve melhor o momento atual?', opts:['Estamos estruturando a operação','Falta previsibilidade comercial','Temos leads, mas baixa conversão','Temos produto, mas pouca demanda','Queremos escalar com mais controle','Estamos preparando lançamento','Temos estoque parado'] },
+    { id:'cenario', type:'checkbox', q:'Quais cenários descrevem o momento atual?', help:'Pode marcar mais de um.', opts:['Estamos estruturando a operação','Falta previsibilidade comercial','Temos leads, mas baixa conversão','Temos produto, mas pouca demanda','Queremos escalar com mais controle','Estamos preparando lançamento','Temos estoque parado'] },
     { id:'problema', type:'radio', q:'Hoje o maior problema parece estar onde?', opts:['Falta de leads','Qualidade dos leads','Atendimento lento','Baixa conversão','Falta de processo comercial','Falta de gestão dos indicadores','Posicionamento / comunicação','Não sabemos exatamente'] },
   ]},
   { area:'Demanda e mídia', label:'Como geram demanda', qs:[
@@ -207,14 +207,14 @@ const STEPS = [
   ]},
   { area:'Leads e atendimento', label:'Como tratam os leads', qs:[
     { id:'frase_leads', type:'radio', q:'Sobre os leads que chegam hoje, qual frase é mais verdadeira?', opts:['Recebemos poucos leads','Muitos leads são desqualificados','Os leads são bons, mas o atendimento demora','O atendimento acontece, mas falta cadência','Temos volume, mas perdemos oportunidades','Temos boa operação e queremos melhorar performance','Não temos clareza'] },
-    { id:'tempo_atend', type:'radio', q:'Em quanto tempo, em média, um lead novo é atendido?', opts:['Em até 5 minutos','Em até 30 minutos','No mesmo dia','No dia seguinte','Depende do corretor','Não sabemos medir'] },
+    { id:'tempo_atend', type:'radio', q:'Você sabe em quanto tempo seu lead é atendido?', opts:['Sim, tenho controle','Não, não tenho controle'] },
   ]},
   { area:'Gestão comercial', label:'Como gerem a operação', qs:[
     { id:'acompanhamento', type:'radio', q:'Como vocês acompanham leads e oportunidades?', opts:['WhatsApp e controle manual','Planilhas','CRM, mas pouco utilizado','CRM utilizado pela equipe','CRM com indicadores semanais','CRM com gestão ativa e reuniões comerciais','Não temos processo claro'] },
-    { id:'indicadores', type:'checkbox', q:'Quais indicadores vocês acompanham com frequência?', help:'Pode marcar mais de um.', opts:['Leads gerados','Custo por lead','Tempo de atendimento','Taxa de contato','Visitas agendadas','Visitas realizadas','Propostas','Vendas','Conversão por corretor','Conversão por canal','Não acompanhamos com clareza'] },
+    { id:'indicadores', type:'checkbox', q:'Quais indicadores vocês acompanham?', help:'Pode marcar mais de um.', opts:['Leads gerados','Custo por lead (CPL)','Tempo de atendimento','Conversão em vendas','Não acompanhamos com clareza'] },
   ]},
   { area:'Prioridade', label:'O que querem melhorar agora', qs:[
-    { id:'prioridade', type:'radio', q:'O que vocês mais querem melhorar nos próximos 90 dias?', opts:['Gerar mais leads qualificados','Melhorar conversão','Organizar CRM e atendimento','Melhorar campanhas','Diagnosticar gargalos','Aumentar velocidade de vendas','Preparar lançamento','Reposicionar comunicação','Treinar equipe comercial','Melhorar gestão'] },
+    { id:'prioridade', type:'radio', q:'O que mais querem melhorar nos próximos 90 dias?', opts:['Gerar mais leads qualificados','Melhorar conversão','Organizar CRM e atendimento','Melhorar campanhas e criativos','Diagnosticar gargalos da operação'] },
     { id:'desafio', type:'textarea', q:'Em uma frase, qual é o principal desafio hoje?', help:'Pode ser simples. Ex.: "temos leads, mas não vendemos como deveríamos."' },
   ]},
 ];
@@ -245,8 +245,9 @@ function renderQ(q){
   if(q.type==='fields'){
     const f=document.createElement('div'); f.className='fields';
     q.fields.forEach(fl=>{
-      const fd=document.createElement('div'); fd.className='field'+((fl.name==='nome'||fl.name==='empresa')?'':' full');
-      fd.innerHTML=`<label>${fl.label}</label><input type="${fl.type}" data-name="${fl.name}" placeholder="${fl.label}">`;
+      const fd=document.createElement('div'); fd.className='field';
+      const attrs=`type="${fl.type}" data-name="${fl.name}"${fl.inputmode?` inputmode="${fl.inputmode}"`:''}${fl.autocomplete?` autocomplete="${fl.autocomplete}"`:''}${fl.mask?` data-mask="${fl.mask}"`:''} placeholder="${fl.ph||fl.label}"`;
+      fd.innerHTML=`<label>${fl.label}</label><input ${attrs}>`;
       f.appendChild(fd);
     });
     wrap.appendChild(f);
@@ -275,7 +276,7 @@ function renderQ(q){
     });
     wrap.appendChild(ol);
   }
-  const err=document.createElement('div'); err.className='q-err'; err.textContent='Selecione uma opção para continuar.';
+  const err=document.createElement('div'); err.className='q-err'; err.textContent=(q.type==='fields'?'Preencha nome, empresa, WhatsApp e e-mail válidos.':'Selecione uma opção para continuar.');
   wrap.appendChild(err);
   return wrap;
 }
@@ -319,8 +320,16 @@ function validate(i){
     if(q.dataset.req!=='1')return;
     const qid=q.dataset.qid; let filled=false;
     if(q.querySelector('.fields')){
-      const inputs=q.querySelectorAll('input'); filled=[...inputs].every(inp=>inp.value.trim()!=='');
-      [...inputs].forEach(inp=>{answers[inp.dataset.name]=inp.value.trim();});
+      const inputs=q.querySelectorAll('input'); let allok=true;
+      inputs.forEach(inp=>{
+        const val=inp.value.trim(); answers[inp.dataset.name]=val;
+        let bad = val==='';
+        if(inp.type==='email' && val && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) bad=true;
+        if(inp.dataset.mask==='phone' && val.replace(/\D/g,'').length<10) bad=true;
+        inp.style.borderColor = bad ? '#ff6b6b' : '';
+        if(bad) allok=false;
+      });
+      filled=allok;
     } else { filled=!!answers[qid] && (!Array.isArray(answers[qid])||answers[qid].length); }
     if(!filled){ok=false;const e=q.querySelector('.q-err');if(e)e.classList.add('show');}
   });
@@ -363,6 +372,18 @@ function submit(){
   window.addEventListener('mousemove',e=>{dot.style.left=e.clientX+'px';dot.style.top=e.clientY+'px';});
   document.addEventListener('mouseover',e=>{if(e.target.closest('[data-c],.opt,.btn,input,textarea,a'))dot.classList.add('hovering');else dot.classList.remove('hovering');});
 })();
+
+/* máscara de telefone (BR) ao digitar */
+scroll.addEventListener('input',e=>{
+  const inp=e.target;
+  if(!inp.dataset||inp.dataset.mask!=='phone')return;
+  let v=inp.value.replace(/\D/g,'').slice(0,11),out='';
+  if(v.length>10)out='('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7);
+  else if(v.length>6)out='('+v.slice(0,2)+') '+v.slice(2,6)+'-'+v.slice(6);
+  else if(v.length>2)out='('+v.slice(0,2)+') '+v.slice(2);
+  else if(v.length)out='('+v;
+  inp.value=out;
+});
 
 show(0);
 </script>

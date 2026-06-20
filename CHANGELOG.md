@@ -12,6 +12,15 @@ _(nada pendente)_
 
 ---
 
+## [1.1.1] — 2026-06-20
+### Alterado
+- Diagnóstico — **WhatsApp** com máscara BR `(00) 00000-0000` + teclado numérico; **e-mail** com validação e teclado de e-mail; `inputmode`/`autocomplete` em todos os campos
+- **Q5** ("cenário") virou múltipla escolha (checkbox), texto ajustado para "Quais cenários descrevem o momento atual?"
+- **Q10** simplificada: "Você sabe em quanto tempo seu lead é atendido?" → Sim, tenho controle / Não, não tenho controle
+- **Q12** (indicadores) e **Q13** (prioridade) reduzidas para 5 opções principais e lógicas
+
+---
+
 ## [1.1.0] — 2026-06-20
 ### Adicionado
 - **Página Diagnóstico** (`diagnostico.html`) — "Leitura da Operação Imobiliária"
