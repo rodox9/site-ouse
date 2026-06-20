@@ -12,6 +12,19 @@ _(nada pendente)_
 
 ---
 
+## [1.1.0] — 2026-06-20
+### Adicionado
+- **Página Diagnóstico** (`diagnostico.html`) — "Leitura da Operação Imobiliária"
+  - Experiência multi-etapas: **7 etapas visuais, 14 perguntas** (identificação · perfil · momento · demanda · leads · gestão · prioridade)
+  - Painel-mapa que preenche conforme avança · barra de progresso · transições com motion · validação por etapa
+  - Tela de sucesso personalizada (nome + dor/prioridade apontadas pelo lead)
+  - Captura de lead pronta para integração via `SUBMIT_ENDPOINT` (Formspree/webhook)
+
+### Alterado
+- CTAs "Diagnóstico OUSE" (nav, seção e rodapé — Home e Cases) agora apontam para `diagnostico.html`
+
+---
+
 ## [1.0.0] — 2026-06-20
 Primeiro lançamento. Site institucional no ar em **aouse.com.br** (GitHub Pages).
 

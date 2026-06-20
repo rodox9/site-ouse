@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OUSE · Leitura da Operação Imobiliária</title>
+<meta name="description" content="Diagnóstico rápido da OUSE: entenda como sua empresa conecta demanda, mídia, atendimento, vendas e gestão comercial.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,900&family=Barlow:wght@300;400;500;700&family=Permanent+Marker&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --orange:#FF3F34; --green:#34FF48; --black:#080808; --white:#F4F1EC;
+  --gray:#141414; --mid:#1e1e1e;
+  --rule:rgba(244,241,236,.08);
+  --muted:rgba(244,241,236,.45);
+  --cond:'Barlow Condensed',sans-serif;
+  --body:'Barlow',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--body);background:var(--black);color:var(--white);font-weight:300;line-height:1.6;-webkit-font-smoothing:antialiased;overflow:hidden;}
+::selection{background:var(--orange);color:var(--black);}
+a{color:inherit;text-decoration:none;}
+.hand{font-family:'Permanent Marker',cursive;color:var(--orange);font-weight:400;}
+
+.cursor{position:fixed;top:0;left:0;width:13px;height:13px;border-radius:50%;background:var(--orange);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width .25s,height .25s;}
+.cursor.hovering{width:46px;height:46px;}
+@media(hover:none),(max-width:900px){.cursor{display:none!important;}}
+
+/* STAGE */
+.stage{display:flex;height:100vh;}
+.map{width:40%;max-width:560px;flex-shrink:0;background:linear-gradient(160deg,#0d0d0d,var(--black));border-right:1px solid var(--rule);padding:48px 44px;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+.map-glow{position:absolute;top:-10%;left:-15%;width:60%;height:50%;border-radius:50%;background:radial-gradient(circle,rgba(255,63,52,.14),transparent 70%);pointer-events:none;}
+.map-logo{font-family:var(--cond);font-weight:900;font-size:24px;color:var(--white);letter-spacing:.04em;position:relative;z-index:2;}
+.map-eyebrow{font-family:var(--cond);font-weight:900;font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--orange);margin-top:42px;position:relative;z-index:2;}
+.map h1{font-family:var(--cond);font-weight:900;text-transform:uppercase;font-size:clamp(30px,3.2vw,50px);line-height:.9;letter-spacing:-.02em;margin-top:14px;position:relative;z-index:2;}
+.map-sub{font-size:13.5px;color:var(--muted);margin-top:16px;max-width:38ch;line-height:1.6;position:relative;z-index:2;}
+.map-list{list-style:none;margin-top:auto;position:relative;z-index:2;}
+.map-list li{display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid var(--rule);transition:opacity .35s;}
+.map-list li:last-child{border-bottom:none;}
+.map-i{width:26px;height:26px;flex-shrink:0;border:1px solid var(--rule);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--muted);transition:all .35s;}
+.map-t{font-family:var(--cond);font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:.02em;color:var(--muted);transition:color .35s;}
+.map-list li.done .map-i{background:var(--green);border-color:var(--green);color:var(--black);}
+.map-list li.done .map-t{color:rgba(244,241,236,.6);}
+.map-list li.active .map-i{background:var(--orange);border-color:var(--orange);color:var(--black);transform:scale(1.08);}
+.map-list li.active .map-t{color:var(--white);}
+.map-foot{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.04em;margin-top:30px;position:relative;z-index:2;}
+
+/* PANEL */
+.panel{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;}
+.prog{height:3px;background:var(--rule);flex-shrink:0;}
+.prog i{display:block;height:100%;width:0;background:var(--orange);transition:width .6s cubic-bezier(.4,0,.2,1);}
+.panel-top{display:flex;justify-content:space-between;align-items:center;padding:22px 6vw 0;flex-shrink:0;}
+.panel-step{font-family:var(--cond);font-weight:900;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);}
+.panel-exit{font-family:var(--cond);font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:color .2s;}
+.panel-exit:hover{color:var(--white);}
+.panel-scroll{flex:1;overflow-y:auto;padding:36px 6vw 20px;}
+.panel-scroll::-webkit-scrollbar{width:8px;}.panel-scroll::-webkit-scrollbar-thumb{background:var(--mid);border-radius:4px;}
+
+.dstep{display:none;max-width:680px;}
+.dstep.on{display:block;}
+.q{margin-bottom:44px;}
+.q-label{font-family:var(--cond);font-weight:900;text-transform:uppercase;font-size:clamp(22px,2.6vw,34px);line-height:1.02;letter-spacing:-.01em;margin-bottom:6px;}
+.q-label .n{color:var(--orange);margin-right:10px;}
+.q-help{font-size:13px;color:var(--muted);margin-bottom:20px;}
+.opts{display:flex;flex-direction:column;gap:8px;}
+.opt{display:flex;align-items:center;gap:14px;padding:15px 18px;border:1px solid var(--rule);border-radius:4px;cursor:pointer;transition:all .2s;background:var(--gray);}
+.opt:hover{border-color:var(--muted);background:var(--mid);}
+.opt .box{width:20px;height:20px;flex-shrink:0;border:1.5px solid var(--muted);display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:12px;color:var(--black);font-weight:900;}
+.opt.radio .box{border-radius:50%;}
+.opt .tx{font-size:15px;color:#dcd9d2;}
+.opt.sel{border-color:var(--orange);background:rgba(255,63,52,.07);}
+.opt.sel .box{background:var(--orange);border-color:var(--orange);}
+.opt.sel .tx{color:var(--white);}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.field{display:flex;flex-direction:column;gap:7px;}
+.field.full{grid-column:1 / -1;}
+.field label{font-family:var(--cond);font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.field input,.field textarea{background:var(--gray);border:1px solid var(--rule);border-radius:4px;padding:14px 16px;color:var(--white);font-family:var(--body);font-size:15px;transition:border-color .2s;}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--orange);}
+.field textarea{resize:vertical;min-height:90px;}
+.q-err{color:#ff6b6b;font-size:12.5px;margin-top:12px;display:none;}
+.q-err.show{display:block;}
+
+.panel-nav{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 6vw 26px;border-top:1px solid var(--rule);flex-shrink:0;}
+.btn{font-family:var(--cond);font-weight:900;font-size:15px;letter-spacing:.06em;text-transform:uppercase;padding:15px 30px;border-radius:100px;cursor:pointer;border:1px solid var(--rule);background:transparent;color:var(--white);transition:all .25s;}
+.btn-back{color:var(--muted);}
+.btn-back:hover{color:var(--white);border-color:var(--muted);}
+.btn-back[disabled]{opacity:0;pointer-events:none;}
+.btn-next{background:var(--orange);color:var(--black);border-color:var(--orange);display:inline-flex;align-items:center;gap:12px;}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(255,63,52,.3);}
+
+/* INTRO */
+.intro{max-width:620px;}
+.intro h2{font-family:var(--cond);font-weight:900;text-transform:uppercase;font-size:clamp(34px,4.5vw,62px);line-height:.9;letter-spacing:-.02em;margin-bottom:26px;}
+.intro h2 .o{color:var(--orange);}
+.intro p{font-size:16px;color:#cfccc4;line-height:1.7;margin-bottom:16px;max-width:48ch;}
+.intro .sig{color:var(--muted);font-size:14px;}
+
+/* SUCESSO */
+.done-screen{max-width:620px;text-align:left;}
+.done-mark{width:74px;height:74px;border-radius:50%;background:var(--green);color:var(--black);display:flex;align-items:center;justify-content:center;font-size:38px;font-weight:900;margin-bottom:30px;}
+.done-screen h2{font-family:var(--cond);font-weight:900;text-transform:uppercase;font-size:clamp(36px,5vw,72px);line-height:.88;letter-spacing:-.02em;margin-bottom:22px;}
+.done-screen h2 .o{color:var(--orange);}
+.done-screen p{font-size:16px;color:#cfccc4;line-height:1.7;margin-bottom:16px;max-width:46ch;}
+.done-flag{border-left:2px solid var(--orange);padding-left:18px;margin:24px 0;}
+.done-flag b{color:var(--white);}
+
+@media(max-width:900px){
+  body{overflow:auto;}
+  .stage{flex-direction:column;height:auto;min-height:100vh;}
+  .map{width:100%;max-width:none;padding:28px 24px;}
+  .map h1{font-size:34px;}
+  .map-list{display:none;}
+  .map-sub{display:none;}
+  .panel{min-height:70vh;}
+  .panel-scroll{padding:28px 24px;}
+  .panel-top,.panel-nav{padding-left:24px;padding-right:24px;}
+  .fields{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="cursor"></div>
+
+<div class="stage">
+  <!-- MAPA -->
+  <aside class="map">
+    <div class="map-glow"></div>
+    <a href="index.html" class="map-logo" data-c>OUSE</a>
+    <div class="map-eyebrow">Diagnóstico OUSE</div>
+    <h1>Leitura da<br>Operação<br><span class="hand" style="font-size:.7em">imobiliária.</span></h1>
+    <p class="map-sub">Um diagnóstico rápido para entender como sua empresa conecta demanda, mídia, atendimento, vendas e gestão comercial.</p>
+    <ol class="map-list" id="mapList"></ol>
+    <div class="map-foot">Sem custo · Sem compromisso · Resposta em até 72h</div>
+  </aside>
+
+  <!-- PAINEL -->
+  <section class="panel">
+    <div class="prog"><i id="prog"></i></div>
+    <div class="panel-top">
+      <div class="panel-step" id="stepLabel">Bem-vindo</div>
+      <a href="index.html" class="panel-exit" data-c>✕ Sair</a>
+    </div>
+    <div class="panel-scroll" id="scroll">
+
+      <!-- INTRO -->
+      <div class="dstep on intro" data-screen="intro">
+        <h2>Toda operação<br>deixa <span class="o">sinais.</span></h2>
+        <p>Alguns aparecem na mídia. Outros no atendimento. Outros na conversão. Outros na gestão.</p>
+        <p>Esta leitura rápida ajuda a entender onde sua imobiliária ou incorporadora está hoje — e onde pode estar perdendo <b style="color:var(--white);font-weight:700">clareza, velocidade ou resultado.</b></p>
+        <p class="sig">7 etapas · ~3 minutos · respostas confidenciais</p>
+      </div>
+
+      <!-- STEPS injetadas aqui -->
+      <div id="stepsHost"></div>
+
+      <!-- SUCESSO -->
+      <div class="dstep done-screen" data-screen="done">
+        <div class="done-mark">✓</div>
+        <h2 id="doneTitle">Leitura <span class="o">recebida.</span></h2>
+        <p id="doneText">Em até 72h a OUSE devolve um diagnóstico da sua operação — onde está perdendo clareza, velocidade ou resultado.</p>
+        <div class="done-flag" id="doneFlag"></div>
+        <p class="sig">Primeiro o diagnóstico. Depois a decisão.</p>
+      </div>
+
+    </div>
+    <div class="panel-nav">
+      <button class="btn btn-back" id="back" disabled>← Voltar</button>
+      <button class="btn btn-next" id="next">Começar a leitura <span>→</span></button>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+/* ====== CONFIG ====== */
+// Para receber os leads, cole aqui a URL de um endpoint (ex.: Formspree https://formspree.io/f/xxxx)
+// Deixe vazio para apenas mostrar a tela de sucesso (sem envio).
+const SUBMIT_ENDPOINT = '';
+
+/* ====== ESTRUTURA · 7 etapas · 14 perguntas ====== */
+const STEPS = [
+  { area:'Identificação', label:'Quem é você', qs:[
+    { id:'identificacao', type:'fields', q:'Qual seu nome e empresa?', fields:[
+      {name:'nome',label:'Nome',type:'text'},
+      {name:'empresa',label:'Empresa',type:'text'},
+      {name:'whatsapp',label:'WhatsApp',type:'tel'},
+      {name:'email',label:'E-mail',type:'email'},
+    ]},
+    { id:'cargo', type:'radio', q:'Qual seu cargo ou função hoje?', opts:['Sócio / fundador','Diretor comercial','Diretor de marketing','Gestor comercial','Coordenador de vendas','Corretor líder','Outro'] },
+  ]},
+  { area:'Perfil da operação', label:'Que operação vocês têm', qs:[
+    { id:'tipo', type:'radio', q:'Hoje sua empresa atua principalmente como:', opts:['Imobiliária de terceiros','Imobiliária com produtos próprios/parcerias','Incorporadora','Loteadora','House de vendas','Operação híbrida','Outro'] },
+    { id:'porte', type:'radio', q:'Qual o porte da operação comercial?', opts:['Até 3 corretores','4 a 10 corretores','11 a 30 corretores','31 a 80 corretores','Mais de 80 corretores','Não temos equipe comercial estruturada'] },
+  ]},
+  { area:'Momento comercial', label:'Qual momento estão vivendo', qs:[
+    { id:'cenario', type:'radio', q:'Qual cenário descreve melhor o momento atual?', opts:['Estamos estruturando a operação','Falta previsibilidade comercial','Temos leads, mas baixa conversão','Temos produto, mas pouca demanda','Queremos escalar com mais controle','Estamos preparando lançamento','Temos estoque parado'] },
+    { id:'problema', type:'radio', q:'Hoje o maior problema parece estar onde?', opts:['Falta de leads','Qualidade dos leads','Atendimento lento','Baixa conversão','Falta de processo comercial','Falta de gestão dos indicadores','Posicionamento / comunicação','Não sabemos exatamente'] },
+  ]},
+  { area:'Demanda e mídia', label:'Como geram demanda', qs:[
+    { id:'investimento', type:'radio', q:'Vocês investem mensalmente em tráfego pago?', opts:['Não investimos ainda','Até R$ 3 mil/mês','R$ 3 mil a R$ 10 mil/mês','R$ 10 mil a R$ 30 mil/mês','Acima de R$ 30 mil/mês','Investimos, mas sem clareza do valor'] },
+    { id:'canais', type:'checkbox', q:'Quais canais geram demanda hoje?', help:'Pode marcar mais de um.', opts:['Meta Ads','Google Ads','Portais imobiliários','Instagram orgânico','Indicação','Parcerias','Base própria / CRM','Plantão físico','WhatsApp ativo','Outros'] },
+  ]},
+  { area:'Leads e atendimento', label:'Como tratam os leads', qs:[
+    { id:'frase_leads', type:'radio', q:'Sobre os leads que chegam hoje, qual frase é mais verdadeira?', opts:['Recebemos poucos leads','Muitos leads são desqualificados','Os leads são bons, mas o atendimento demora','O atendimento acontece, mas falta cadência','Temos volume, mas perdemos oportunidades','Temos boa operação e queremos melhorar performance','Não temos clareza'] },
+    { id:'tempo_atend', type:'radio', q:'Em quanto tempo, em média, um lead novo é atendido?', opts:['Em até 5 minutos','Em até 30 minutos','No mesmo dia','No dia seguinte','Depende do corretor','Não sabemos medir'] },
+  ]},
+  { area:'Gestão comercial', label:'Como gerem a operação', qs:[
+    { id:'acompanhamento', type:'radio', q:'Como vocês acompanham leads e oportunidades?', opts:['WhatsApp e controle manual','Planilhas','CRM, mas pouco utilizado','CRM utilizado pela equipe','CRM com indicadores semanais','CRM com gestão ativa e reuniões comerciais','Não temos processo claro'] },
+    { id:'indicadores', type:'checkbox', q:'Quais indicadores vocês acompanham com frequência?', help:'Pode marcar mais de um.', opts:['Leads gerados','Custo por lead','Tempo de atendimento','Taxa de contato','Visitas agendadas','Visitas realizadas','Propostas','Vendas','Conversão por corretor','Conversão por canal','Não acompanhamos com clareza'] },
+  ]},
+  { area:'Prioridade', label:'O que querem melhorar agora', qs:[
+    { id:'prioridade', type:'radio', q:'O que vocês mais querem melhorar nos próximos 90 dias?', opts:['Gerar mais leads qualificados','Melhorar conversão','Organizar CRM e atendimento','Melhorar campanhas','Diagnosticar gargalos','Aumentar velocidade de vendas','Preparar lançamento','Reposicionar comunicação','Treinar equipe comercial','Melhorar gestão'] },
+    { id:'desafio', type:'textarea', q:'Em uma frase, qual é o principal desafio hoje?', help:'Pode ser simples. Ex.: "temos leads, mas não vendemos como deveríamos."' },
+  ]},
+];
+
+const answers = {};
+let idx = 0; // 0 = intro · 1..7 = etapas · 8 = sucesso
+const TOTAL = STEPS.length;
+
+/* ====== RENDER DAS ETAPAS ====== */
+let gn=0;
+const host = document.getElementById('stepsHost');
+STEPS.forEach((step,si)=>{
+  const el=document.createElement('div');
+  el.className='dstep'; el.dataset.screen='step'; el.dataset.step=si+1;
+  step.qs.forEach((q,qi)=>{
+    el.appendChild(renderQ(q, si, qi));
+  });
+  host.appendChild(el);
+});
+
+function renderQ(q){
+  gn++;
+  const wrap=document.createElement('div'); wrap.className='q'; wrap.dataset.qid=q.id; wrap.dataset.req=(q.type==='checkbox'||q.type==='textarea')?'0':'1';
+  const lab=document.createElement('div'); lab.className='q-label'; lab.innerHTML=`<span class="n">${String(gn).padStart(2,'0')}</span>${q.q}`;
+  wrap.appendChild(lab);
+  if(q.help){const h=document.createElement('div');h.className='q-help';h.textContent=q.help;wrap.appendChild(h);}
+
+  if(q.type==='fields'){
+    const f=document.createElement('div'); f.className='fields';
+    q.fields.forEach(fl=>{
+      const fd=document.createElement('div'); fd.className='field'+((fl.name==='nome'||fl.name==='empresa')?'':' full');
+      fd.innerHTML=`<label>${fl.label}</label><input type="${fl.type}" data-name="${fl.name}" placeholder="${fl.label}">`;
+      f.appendChild(fd);
+    });
+    wrap.appendChild(f);
+  } else if(q.type==='textarea'){
+    const fd=document.createElement('div'); fd.className='field full';
+    fd.innerHTML=`<textarea data-name="${q.id}" placeholder="Escreva aqui..."></textarea>`;
+    wrap.appendChild(fd);
+  } else {
+    const ol=document.createElement('div'); ol.className='opts';
+    q.opts.forEach(opt=>{
+      const o=document.createElement('div'); o.className='opt '+(q.type==='radio'?'radio':'check'); o.dataset.c='';
+      o.innerHTML=`<span class="box">${q.type==='radio'?'':'✓'}</span><span class="tx">${opt}</span>`;
+      o.addEventListener('click',()=>{
+        if(q.type==='radio'){
+          ol.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));
+          o.classList.add('sel'); answers[q.id]=opt;
+        } else {
+          o.classList.toggle('sel');
+          answers[q.id]=answers[q.id]||[];
+          const i=answers[q.id].indexOf(opt);
+          if(i>=0)answers[q.id].splice(i,1); else answers[q.id].push(opt);
+        }
+        wrap.querySelector('.q-err')&&wrap.querySelector('.q-err').classList.remove('show');
+      });
+      ol.appendChild(o);
+    });
+    wrap.appendChild(ol);
+  }
+  const err=document.createElement('div'); err.className='q-err'; err.textContent='Selecione uma opção para continuar.';
+  wrap.appendChild(err);
+  return wrap;
+}
+
+/* ====== MAPA ====== */
+const mapList=document.getElementById('mapList');
+STEPS.forEach((s,i)=>{
+  const li=document.createElement('li'); li.dataset.i=i+1;
+  li.innerHTML=`<span class="map-i">${i+1}</span><span class="map-t">${s.label}</span>`;
+  mapList.appendChild(li);
+});
+
+/* ====== NAVEGAÇÃO ====== */
+const screens=[document.querySelector('[data-screen="intro"]'),...document.querySelectorAll('[data-screen="step"]'),document.querySelector('[data-screen="done"]')];
+const back=document.getElementById('back'),next=document.getElementById('next'),prog=document.getElementById('prog'),stepLabel=document.getElementById('stepLabel'),scroll=document.getElementById('scroll');
+
+function show(i){
+  screens.forEach(s=>s.classList.remove('on'));
+  const cur=screens[i]; cur.classList.add('on');
+  gsap.fromTo(cur,{opacity:0,x:30},{opacity:1,x:0,duration:.5,ease:'power3.out'});
+  scroll.scrollTop=0;
+  // progresso
+  const pct = i===0?4 : i>TOTAL? 100 : (i/TOTAL)*100;
+  prog.style.width=pct+'%';
+  // mapa
+  mapList.querySelectorAll('li').forEach((li,li_i)=>{
+    li.classList.remove('active','done');
+    if(i>=1&&i<=TOTAL){ if(li_i<i-1)li.classList.add('done'); else if(li_i===i-1)li.classList.add('active'); }
+    if(i>TOTAL)li.classList.add('done');
+  });
+  // labels + botões
+  if(i===0){stepLabel.textContent='Bem-vindo';back.disabled=true;next.innerHTML='Começar a leitura <span>→</span>';}
+  else if(i>TOTAL){stepLabel.textContent='Concluído';back.disabled=true;next.style.display='none';}
+  else{stepLabel.textContent=`Etapa ${i} de ${TOTAL} · ${STEPS[i-1].area}`;back.disabled=false;next.style.display='';next.innerHTML=(i===TOTAL?'Enviar leitura':'Avançar')+' <span>→</span>';}
+}
+
+function validate(i){
+  if(i<1||i>TOTAL)return true;
+  const stepEl=screens[i]; let ok=true;
+  stepEl.querySelectorAll('.q').forEach(q=>{
+    if(q.dataset.req!=='1')return;
+    const qid=q.dataset.qid; let filled=false;
+    if(q.querySelector('.fields')){
+      const inputs=q.querySelectorAll('input'); filled=[...inputs].every(inp=>inp.value.trim()!=='');
+      [...inputs].forEach(inp=>{answers[inp.dataset.name]=inp.value.trim();});
+    } else { filled=!!answers[qid] && (!Array.isArray(answers[qid])||answers[qid].length); }
+    if(!filled){ok=false;const e=q.querySelector('.q-err');if(e)e.classList.add('show');}
+  });
+  return ok;
+}
+
+next.addEventListener('click',()=>{
+  if(!validate(idx)){scroll.querySelector('.q-err.show')&&scroll.querySelector('.q-err.show').scrollIntoView({behavior:'smooth',block:'center'});return;}
+  if(idx===TOTAL){submit();return;}
+  idx++;show(idx);
+});
+back.addEventListener('click',()=>{ if(idx>0){idx--;show(idx);} });
+
+/* ====== ENVIO ====== */
+function submit(){
+  // captura textarea/desafio
+  const ta=screens[TOTAL].querySelector('textarea'); if(ta)answers['desafio']=ta.value.trim();
+  const payload={...answers,_origem:'site-ouse/diagnostico',_data:new Date().toISOString()};
+
+  // tela de sucesso personalizada
+  const nome=(answers.nome||'').split(' ')[0];
+  document.getElementById('doneTitle').innerHTML = nome?`Obrigado, ${nome}.<br>Leitura <span class="o">recebida.</span>`:'Leitura <span class="o">recebida.</span>';
+  const flag=document.getElementById('doneFlag');
+  if(answers.problema||answers.prioridade){
+    flag.innerHTML=`Você apontou: <b>${answers.problema||'—'}</b>${answers.prioridade?` · prioridade nos próximos 90 dias: <b>${answers.prioridade}</b>`:''}. Vamos olhar isso primeiro.`;
+  } else { flag.style.display='none'; }
+
+  idx=TOTAL+1; show(idx);
+
+  if(SUBMIT_ENDPOINT){
+    fetch(SUBMIT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
+  } else {
+    console.log('[diagnóstico] payload (configure SUBMIT_ENDPOINT para enviar):',payload);
+  }
+}
+
+/* cursor */
+(function(){
+  const dot=document.querySelector('.cursor');
+  window.addEventListener('mousemove',e=>{dot.style.left=e.clientX+'px';dot.style.top=e.clientY+'px';});
+  document.addEventListener('mouseover',e=>{if(e.target.closest('[data-c],.opt,.btn,input,textarea,a'))dot.classList.add('hovering');else dot.classList.remove('hovering');});
+})();
+
+show(0);
+</script>
+</body>
+</html>
