@@ -8,7 +8,8 @@ versionamento [SemVer](https://semver.org/lang/pt-BR/).
 > (push + tag), move-se o bloco para uma versão com data.
 
 ## [Não publicado]
-_(nada pendente)_
+### Adicionado (aguardando chaves para ativar → vira v1.2.0)
+- Diagnóstico — integração de notificações no envio: **e-mail (Web3Forms)** + **WhatsApp (CallMeBot)**, com resumo formatado do lead. Falta preencher `WEB3FORMS_KEY` e `WHATSAPP_PHONE`/`WHATSAPP_APIKEY` em `diagnostico.html`.
 
 ---
 

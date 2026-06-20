@@ -177,10 +177,12 @@ a{color:inherit;text-decoration:none;}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
-/* ====== CONFIG ====== */
-// Para receber os leads, cole aqui a URL de um endpoint (ex.: Formspree https://formspree.io/f/xxxx)
-// Deixe vazio para apenas mostrar a tela de sucesso (sem envio).
-const SUBMIT_ENDPOINT = '';
+/* ====== CONFIG · NOTIFICAÇÕES (grátis) ====== */
+// 1) E-MAIL via Web3Forms — pegue a access key grátis em https://web3forms.com (só informar um e-mail)
+const WEB3FORMS_KEY   = '';
+// 2) WHATSAPP via CallMeBot — grátis para o seu número. https://www.callmebot.com/blog/free-api-whatsapp-messages/
+const WHATSAPP_PHONE  = '';   // ex.: 5541999998888  (DDI 55 + DDD + número)
+const WHATSAPP_APIKEY = '';   // chave que o CallMeBot envia no seu WhatsApp
 
 /* ====== ESTRUTURA · 7 etapas · 14 perguntas ====== */
 const STEPS = [
@@ -345,25 +347,48 @@ back.addEventListener('click',()=>{ if(idx>0){idx--;show(idx);} });
 
 /* ====== ENVIO ====== */
 function submit(){
-  // captura textarea/desafio
   const ta=screens[TOTAL].querySelector('textarea'); if(ta)answers['desafio']=ta.value.trim();
   const payload={...answers,_origem:'site-ouse/diagnostico',_data:new Date().toISOString()};
+  const L=v=>Array.isArray(v)?(v.join(', ')||'—'):(v||'—');
+  const resumo=
+`Nome: ${L(answers.nome)}
+Empresa: ${L(answers.empresa)}
+WhatsApp: ${L(answers.whatsapp)}
+E-mail: ${L(answers.email)}
+Cargo: ${L(answers.cargo)}
+Tipo de operação: ${L(answers.tipo)}
+Porte: ${L(answers.porte)}
+Momento: ${L(answers.cenario)}
+Maior problema: ${L(answers.problema)}
+Investimento: ${L(answers.investimento)}
+Canais: ${L(answers.canais)}
+Sobre os leads: ${L(answers.frase_leads)}
+Controle de atendimento: ${L(answers.tempo_atend)}
+Gestão: ${L(answers.acompanhamento)}
+Indicadores: ${L(answers.indicadores)}
+Prioridade 90 dias: ${L(answers.prioridade)}
+Desafio: ${L(answers.desafio)}`;
 
   // tela de sucesso personalizada
   const nome=(answers.nome||'').split(' ')[0];
   document.getElementById('doneTitle').innerHTML = nome?`Obrigado, ${nome}.<br>Leitura <span class="o">recebida.</span>`:'Leitura <span class="o">recebida.</span>';
   const flag=document.getElementById('doneFlag');
   if(answers.problema||answers.prioridade){
-    flag.innerHTML=`Você apontou: <b>${answers.problema||'—'}</b>${answers.prioridade?` · prioridade nos próximos 90 dias: <b>${answers.prioridade}</b>`:''}. Vamos olhar isso primeiro.`;
+    flag.innerHTML=`Você apontou: <b>${answers.problema||'—'}</b>${answers.prioridade?` · prioridade: <b>${answers.prioridade}</b>`:''}. Vamos olhar isso primeiro.`;
   } else { flag.style.display='none'; }
-
   idx=TOTAL+1; show(idx);
 
-  if(SUBMIT_ENDPOINT){
-    fetch(SUBMIT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
-  } else {
-    console.log('[diagnóstico] payload (configure SUBMIT_ENDPOINT para enviar):',payload);
+  // 1) E-MAIL via Web3Forms
+  if(WEB3FORMS_KEY){
+    fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
+      body:JSON.stringify({access_key:WEB3FORMS_KEY,subject:`🔥 Novo diagnóstico OUSE — ${answers.empresa||answers.nome||'lead'}`,from_name:'Site OUSE · Diagnóstico',email:answers.email,nome:answers.nome,empresa:answers.empresa,whatsapp:answers.whatsapp,resumo})}).catch(()=>{});
   }
+  // 2) WHATSAPP via CallMeBot
+  if(WHATSAPP_PHONE&&WHATSAPP_APIKEY){
+    const msg=encodeURIComponent('🔥 Novo diagnóstico OUSE\n\n'+resumo);
+    fetch(`https://api.callmebot.com/whatsapp.php?phone=${WHATSAPP_PHONE}&text=${msg}&apikey=${WHATSAPP_APIKEY}`,{mode:'no-cors'}).catch(()=>{});
+  }
+  if(!WEB3FORMS_KEY&&!WHATSAPP_PHONE){console.log('[diagnóstico] configure WEB3FORMS_KEY / WHATSAPP_* para receber os leads:',payload);}
 }
 
 /* cursor */
