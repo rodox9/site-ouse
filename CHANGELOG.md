@@ -12,6 +12,15 @@ _(nada pendente)_
 
 ---
 
+## [1.3.0] — 2026-06-20
+### Adicionado
+- **Diagnóstico Express** (`express.html`) — funil **não-listado** (`noindex`, acessível só por link) para campanhas específicas.
+  - 11 perguntas **uma por vez** (estilo typeform) · auto-avanço ao escolher · teclado (A–E / 1–9) · múltipla escolha na Q7 · barra de progresso · glow animado de fundo
+  - Captura de contato (nome + WhatsApp) no fim · notifica **e-mail + WhatsApp** (mesmos canais, assunto "⚡ Express")
+  - Não linkado em nenhuma página do site (não-listado)
+
+---
+
 ## [1.2.0] — 2026-06-20
 ### Adicionado
 - Diagnóstico — **captação de leads ativa**: cada envio dispara **e-mail (Web3Forms)** + **WhatsApp (CallMeBot)** com resumo formatado do lead.
