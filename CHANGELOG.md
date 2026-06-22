@@ -12,6 +12,15 @@ _(nada pendente)_
 
 ---
 
+## [1.5.0] — 2026-06-20
+### Adicionado
+- Express — **capa de boas-vindas** com tom gentil ("a gente tá aqui pra te ajudar") antes do contato.
+### Alterado
+- Captação simplificada para **uma mensagem por lead**: ✅ completo ao terminar, ou 🟠 parcial (e-mail + WhatsApp via `keepalive`) se sair sem finalizar — **sempre envia**.
+- Textos mais gentis (capa, contato e tela final).
+
+---
+
 ## [1.4.0] — 2026-06-20
 ### Adicionado
 - Express — **captação progressiva** (não perde quem preenche só parte):

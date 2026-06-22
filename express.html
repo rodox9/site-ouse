@@ -48,7 +48,6 @@ a{color:inherit;text-decoration:none;}
 .prog{height:3px;background:var(--rule);border-radius:3px;overflow:hidden;}
 .prog i{display:block;height:100%;width:0;background:var(--orange);border-radius:3px;transition:width .7s cubic-bezier(.4,0,.2,1);}
 
-/* stage rolável — corrige travamento/sobreposição em telas altas (Q6, Q7, contato) */
 .stage{position:relative;z-index:10;height:100%;overflow-y:auto;overflow-x:hidden;display:flex;align-items:safe center;padding:96px 5vw 132px;}
 .stage::-webkit-scrollbar{width:8px;}.stage::-webkit-scrollbar-thumb{background:var(--mid);border-radius:4px;}
 .screen{width:100%;max-width:860px;margin:0 auto;}
@@ -71,6 +70,7 @@ a{color:inherit;text-decoration:none;}
 .cta-row{margin-top:26px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
 .btn{font-family:var(--cond);font-weight:900;font-size:16px;letter-spacing:.04em;text-transform:uppercase;padding:14px 30px;border-radius:100px;cursor:pointer;border:1px solid var(--orange);background:var(--orange);color:var(--black);display:inline-flex;align-items:center;gap:12px;transition:transform .25s,box-shadow .25s,opacity .2s;}
 .btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(255,63,52,.32);}
+.btn.big{font-size:19px;padding:18px 40px;}
 .btn[disabled]{opacity:.35;pointer-events:none;}
 .btn-ghost{background:transparent;color:var(--muted);border-color:var(--rule);}
 .btn-ghost:hover{color:var(--white);border-color:var(--muted);box-shadow:none;}
@@ -86,6 +86,15 @@ a{color:inherit;text-decoration:none;}
 .field select option{background:#141414;}
 .reveal-wrap{margin-top:14px;max-width:600px;}
 @media(max-width:620px){.fields{grid-template-columns:1fr;}}
+
+/* CAPA */
+.cover-eyebrow{font-family:var(--cond);font-weight:900;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--orange);margin-bottom:20px;display:inline-flex;align-items:center;gap:10px;}
+.cover-eyebrow::before{content:'';width:26px;height:2px;background:var(--orange);}
+.cover-h{font-family:var(--cond);font-weight:900;text-transform:uppercase;font-size:clamp(44px,8vw,104px);line-height:.84;letter-spacing:-.03em;}
+.cover-h .o{color:var(--orange);}
+.cover-h .mk{font-family:'Permanent Marker',cursive;text-transform:none;color:var(--orange);font-weight:400;}
+.cover-sub{font-size:clamp(16px,1.9vw,21px);color:#d6d2c9;line-height:1.6;margin-top:26px;max-width:46ch;}
+.cover-sub b{color:#fff;font-weight:500;}
 
 .big-h{font-family:var(--cond);font-weight:900;text-transform:uppercase;font-size:clamp(40px,8vw,96px);line-height:.86;letter-spacing:-.03em;}
 .big-h .o{color:var(--orange);}
@@ -123,11 +132,12 @@ const WEB3FORMS_KEY   = '6894e59b-da65-4152-bb85-fc03193c11a5';
 const WHATSAPP_PHONE  = '554195351000';
 const WHATSAPP_APIKEY = '7706708';
 const CARGOS=['Sócio / fundador','Diretor','Gestor comercial','Corretor','Marketing','Outro'];
-/* MODO TESTE: abra com ?teste=1 para navegar sem campos obrigatórios. Sem o parâmetro, o formulário exige tudo (produção). */
+/* MODO TESTE: abra com ?teste=1 para navegar sem obrigatórios e sem enviar nada. */
 const TEST_MODE = new URLSearchParams(location.search).has('teste');
 
-/* ===== TELAS: contato (1º) + 11 perguntas ===== */
+/* ===== TELAS: capa + contato + 11 perguntas ===== */
 const Q = [
+  {id:'_cover', cover:true},
   {id:'_contato', contact:true},
   {id:'perfil', t:'Quem é você hoje?', opts:['Corretor autônomo','Corretor de imobiliária','Imobiliária','Incorporadora','Outro']},
   {id:'corretores', t:'Quantos corretores atuam na sua operação?', skipIf:a=>!['Imobiliária','Incorporadora','Outro'].includes(a.perfil), opts:['1 a 3','4 a 10','11 a 25','Mais de 25','Não se aplica']},
@@ -147,15 +157,20 @@ let i=0, busy=false;
 const screen=document.getElementById('screen'),prog=document.getElementById('prog'),counter=document.getElementById('counter'),backBtn=document.getElementById('back'),kbd=document.getElementById('kbd');
 
 const flow=()=>Q.map((q,idx)=>idx).filter(idx=>!(Q[idx].skipIf&&Q[idx].skipIf(answers)));
-const qFlow=()=>flow().filter(idx=>!Q[idx].contact);
+const qFlow=()=>flow().filter(idx=>!Q[idx].contact&&!Q[idx].cover);
 const v=id=>(document.getElementById(id).value||'').trim();
 
 function render(dir){
   const q=Q[i]; let html='';
-  if(q.contact){
-    html=`<div class="eyebrow">Diagnóstico Express</div>
-      <div class="q-title">Antes de começar, <span class="hand" style="font-size:.78em">quem é você?</span></div>
-      <div class="q-help">Tudo obrigatório — é assim que a OUSE manda seu diagnóstico.</div>
+  if(q.cover){
+    html=`<div class="cover-eyebrow">Diagnóstico Imobiliário Express</div>
+      <div class="cover-h">A gente tá aqui<br>pra te <span class="mk">ajudar.</span></div>
+      <p class="cover-sub">Sem julgamento e sem enrolação. Em pouco mais de 2 minutos a OUSE entende o seu momento no mercado imobiliário — e te mostra, <b>com clareza, por onde dá pra crescer primeiro.</b></p>
+      <div class="cta-row"><button class="btn big" id="start">Bora começar →</button><span class="hint">11 perguntas rápidas · respostas confidenciais</span></div>`;
+  } else if(q.contact){
+    html=`<div class="eyebrow">Quase lá</div>
+      <div class="q-title">Pra começar, <span class="hand" style="font-size:.78em">como te chamamos?</span></div>
+      <div class="q-help">A gente usa isso só pra te enviar seu diagnóstico. Nada de spam, prometido.</div>
       <div class="fields">
         <div class="field"><label>Nome</label><input id="f_nome" type="text" autocomplete="name" placeholder="Seu nome"></div>
         <div class="field"><label>Empresa</label><input id="f_empresa" type="text" autocomplete="organization" placeholder="Sua empresa"></div>
@@ -163,7 +178,7 @@ function render(dir){
         <div class="field"><label>E-mail</label><input id="f_email" type="email" inputmode="email" autocomplete="email" placeholder="voce@empresa.com.br"></div>
         <div class="field full"><label>Seu cargo</label><select id="f_cargo"><option value="">Selecione...</option>${CARGOS.map(c=>`<option>${c}</option>`).join('')}</select></div>
       </div>
-      <div class="cta-row"><button class="btn" id="begin">Começar →</button><span class="hint" id="ferr"></span></div>`;
+      <div class="cta-row"><button class="btn" id="begin">Continuar →</button><span class="hint" id="ferr"></span></div>`;
   } else {
     html=`<div class="q-num">${String(qFlow().indexOf(i)+1).padStart(2,'0')}</div>
       <div class="q-title">${q.t}</div>
@@ -176,11 +191,13 @@ function render(dir){
 
   const fromX=dir<0?-40:40;
   gsap.fromTo(screen,{x:fromX,opacity:0},{x:0,opacity:1,duration:.5,ease:'power3.out'});
-  gsap.from(screen.querySelectorAll('.q-num,.eyebrow'),{y:18,opacity:0,duration:.5,ease:'power3.out'});
-  gsap.from(screen.querySelector('.q-title'),{y:22,opacity:0,duration:.55,delay:.05,ease:'power3.out'});
-  gsap.from(screen.querySelectorAll('.opt,.field,.cta-row'),{y:16,opacity:0,duration:.45,stagger:.05,delay:.12,ease:'power3.out'});
+  gsap.from(screen.querySelectorAll('.q-num,.eyebrow,.cover-eyebrow'),{y:18,opacity:0,duration:.5,ease:'power3.out'});
+  gsap.from(screen.querySelector('.q-title,.cover-h'),{y:22,opacity:0,duration:.55,delay:.05,ease:'power3.out'});
+  gsap.from(screen.querySelectorAll('.opt,.field,.cta-row,.cover-sub'),{y:16,opacity:0,duration:.45,stagger:.05,delay:.12,ease:'power3.out'});
 
-  if(q.contact){
+  if(q.cover){
+    document.getElementById('start').onclick=()=>advance();
+  } else if(q.contact){
     [['nome','f_nome'],['empresa','f_empresa'],['whatsapp','f_zap'],['email','f_email'],['cargo','f_cargo']].forEach(([a,id])=>{if(answers[a])document.getElementById(id).value=answers[a];});
     document.getElementById('f_zap').addEventListener('input',maskPhone);
     document.getElementById('begin').addEventListener('click',begin);
@@ -191,13 +208,13 @@ function render(dir){
     const s=q.opts.indexOf(answers[q.id]); if(s>=0)screen.querySelector(`.opt[data-k="${s}"]`)?.classList.add('sel');
     if(q.reveal && q.reveal.when(answers[q.id])) openReveal(q,false);
   }
-  if(!q.contact)attach(q);
+  if(!q.contact&&!q.cover)attach(q);
 
   const f=flow(), pos=f.indexOf(i);
   prog.style.width=(pos/(f.length-1))*100+'%';
-  counter.innerHTML = q.contact?'CONTATO':`<b>${String(qFlow().indexOf(i)+1).padStart(2,'0')}</b> / ${qFlow().length}`;
+  counter.innerHTML = q.cover?'':(q.contact?'CONTATO':`<b>${String(qFlow().indexOf(i)+1).padStart(2,'0')}</b> / ${qFlow().length}`);
   backBtn.classList.toggle('hidden', pos===0);
-  kbd.textContent = q.contact?'preencha e clique começar':(q.multi?'1–9 marca · enter continua':'A–E ou 1–9 pra escolher');
+  kbd.textContent = q.cover?'enter pra começar':(q.contact?'preencha e clique continuar':(q.multi?'1–9 marca · enter continua':'A–E ou 1–9 pra escolher'));
   gsap.to('#gA',{xPercent:(pos%3-1)*14,yPercent:(pos%2)*10,duration:1.2,ease:'power2.out'});
   gsap.to('#gB',{xPercent:(pos%2-0.5)*16,duration:1.4,ease:'power2.out'});
 }
@@ -244,7 +261,7 @@ function back(){const f=flow(),pos=f.indexOf(i);if(pos>0)animOut(()=>{i=f[pos-1]
 function animOut(cb){gsap.to(screen,{x:-30,opacity:0,duration:.32,ease:'power2.in',onComplete:cb});}
 backBtn.addEventListener('click',back);
 
-/* contato (1ª tela) — tudo obrigatório (inclui cargo) */
+/* contato — tudo obrigatório (exceto em modo teste) */
 function begin(){
   const nome=v('f_nome'),empresa=v('f_empresa'),zap=v('f_zap'),email=v('f_email'),cargo=v('f_cargo');
   const err=document.getElementById('ferr');
@@ -252,12 +269,13 @@ function begin(){
     err.textContent='Preencha nome, empresa, WhatsApp, e-mail válidos e o cargo.';err.style.color='#ff6b6b';return;
   }
   answers.nome=nome;answers.empresa=empresa;answers.whatsapp=zap;answers.email=email;answers.cargo=cargo;
-  if(!TEST_MODE && !startedSent && answers.nome){startedSent=true;sendEmail(`🟡 LEAD INICIOU o Express — ${answers.nome} (${answers.cargo||'—'})`,false);sendWhats('🟡 LEAD INICIOU o Express');}
+  started=true;
   advance();
 }
 
 document.addEventListener('keydown',e=>{
   const q=Q[i]; if(!q||q.contact)return;
+  if(q.cover){if(e.key==='Enter')advance();return;}
   if(document.activeElement&&document.activeElement.tagName==='INPUT'&&q.reveal)return;
   if(e.key==='Backspace'){back();return;}
   if(e.key==='Enter'&&q.multi){advance();return;}
@@ -271,8 +289,8 @@ function maskPhone(e){const inp=e.target;let val=inp.value.replace(/\D/g,'').sli
   else if(val.length>2)out='('+val.slice(0,2)+') '+val.slice(2);
   else if(val.length)out='('+val; inp.value=out;}
 
-/* ===== captação progressiva: início · parcial · completo ===== */
-let startedSent=false, completed=false;
+/* ===== captação: UMA mensagem por lead — completo OU parcial (sempre envia) ===== */
+let started=false, completed=false, sent=false;
 const L=x=>Array.isArray(x)?(x.join(', ')||'—'):(x||'—');
 function buildResumo(){return `Nome: ${answers.nome||'—'}
 Empresa: ${answers.empresa||'—'}
@@ -290,38 +308,31 @@ Organização: ${L(answers.organizacao)}
 Trava: ${L(answers.trava)}
 Meta: ${L(answers.meta)}
 Maturidade mkt: ${L(answers.maturidade)}`;}
-function sendEmail(subject,beacon){
-  if(!WEB3FORMS_KEY)return;
-  const fd=new FormData();
-  fd.append('access_key',WEB3FORMS_KEY);fd.append('subject',subject);fd.append('from_name','Site OUSE · Express');
-  fd.append('email',answers.email||'sem-email@ouse.com.br');fd.append('nome',answers.nome||'—');fd.append('empresa',answers.empresa||'—');fd.append('whatsapp',answers.whatsapp||'—');
-  fd.append('resumo',buildResumo());
-  if(beacon&&navigator.sendBeacon){try{navigator.sendBeacon('https://api.web3forms.com/submit',fd);}catch(e){}}
-  else fetch('https://api.web3forms.com/submit',{method:'POST',body:fd}).catch(()=>{});
-}
-function sendWhats(prefix){
-  if(!WHATSAPP_PHONE||!WHATSAPP_APIKEY)return;
-  const msg=encodeURIComponent(prefix+'\n\n'+buildResumo());
-  fetch(`https://api.callmebot.com/whatsapp.php?phone=${WHATSAPP_PHONE}&text=${msg}&apikey=${WHATSAPP_APIKEY}`,{mode:'no-cors'}).catch(()=>{});
+function sendLead(subject,prefix,keepalive){
+  if(TEST_MODE||sent)return; sent=true;
+  const resumo=buildResumo();
+  if(WEB3FORMS_KEY){const fd=new FormData();fd.append('access_key',WEB3FORMS_KEY);fd.append('subject',subject);fd.append('from_name','Site OUSE · Express');fd.append('email',answers.email||'sem-email@ouse.com.br');fd.append('nome',answers.nome||'—');fd.append('empresa',answers.empresa||'—');fd.append('whatsapp',answers.whatsapp||'—');fd.append('resumo',resumo);
+    fetch('https://api.web3forms.com/submit',{method:'POST',body:fd,keepalive:!!keepalive}).catch(()=>{});}
+  if(WHATSAPP_PHONE&&WHATSAPP_APIKEY){const msg=encodeURIComponent(prefix+'\n\n'+resumo);
+    fetch(`https://api.callmebot.com/whatsapp.php?phone=${WHATSAPP_PHONE}&text=${msg}&apikey=${WHATSAPP_APIKEY}`,{mode:'no-cors',keepalive:!!keepalive}).catch(()=>{});}
 }
 function submit(){
   completed=true; i='done'; renderDone(answers.nome);
-  if(TEST_MODE)return;
-  sendEmail(`✅ Diagnóstico EXPRESS COMPLETO — ${answers.nome} (${answers.cargo})`,false);
-  sendWhats('✅ Diagnóstico EXPRESS COMPLETO');
+  sendLead(`✅ Diagnóstico EXPRESS — ${answers.nome} (${answers.cargo})`,'✅ Diagnóstico EXPRESS · COMPLETO',false);
 }
-/* abandono: se começou e não terminou, salva o parcial ao sair da página */
-window.addEventListener('pagehide',()=>{
-  if(TEST_MODE||!startedSent||completed)return;
-  const onde=(typeof i==='number'&&Q[i]&&!Q[i].contact)?('pergunta '+(qFlow().indexOf(i)+1)):'contato';
-  sendEmail(`🟠 EXPRESS PARCIAL — ${answers.nome||'lead'} parou em ${onde}`,true);
-});
+/* se sair sem terminar, envia o parcial mesmo assim (uma única vez, com keepalive) */
+function leaveCapture(){
+  if(!started||completed)return;
+  const onde=(typeof i==='number'&&Q[i]&&!Q[i].cover&&!Q[i].contact)?('pergunta '+(qFlow().indexOf(i)+1)):'início';
+  sendLead(`🟠 EXPRESS PARCIAL — ${answers.nome||'lead'} parou em ${onde}`,'🟠 Diagnóstico EXPRESS · NÃO finalizou',true);
+}
+window.addEventListener('pagehide',leaveCapture);
 
 function renderDone(nome){
   prog.style.width='100%';counter.textContent='';backBtn.classList.add('hidden');kbd.textContent='';
   screen.innerHTML=`<div class="done-mark">✓</div>
-    <div class="big-h">${nome?`Valeu, ${nome.split(' ')[0]}.<br>`:''}Recebemos <span class="o">tudo.</span></div>
-    <p class="lead">A OUSE vai ler seu momento e te chamar com um diagnóstico do que destrava seu próximo nível. Fica de olho no WhatsApp.</p>
+    <div class="big-h">${nome?`Prontinho, ${nome.split(' ')[0]}.<br>`:''}Tá tudo <span class="o">com a gente.</span></div>
+    <p class="lead">Agora é com a OUSE. A gente vai olhar seu momento com cuidado e te chamar com um caminho claro do que dá pra fazer primeiro. Pode ficar tranquilo — em breve a gente fala no seu WhatsApp. 💬</p>
     <div class="cta-row"><a href="index.html" class="btn">Conhecer a OUSE →</a><a href="https://wa.me/${WHATSAPP_PHONE}" class="btn btn-ghost" target="_blank" rel="noopener">Falar agora</a></div>`;
   gsap.from(screen.querySelector('.done-mark'),{scale:0,rotate:-90,duration:.6,ease:'back.out(2)'});
   gsap.from(screen.querySelectorAll('.big-h,.lead,.cta-row'),{y:24,opacity:0,duration:.6,stagger:.12,delay:.2,ease:'power3.out'});
@@ -331,7 +342,7 @@ gsap.to('#gA',{scale:1.12,duration:7,ease:'sine.inOut',repeat:-1,yoyo:true,trans
 gsap.to('#gB',{scale:1.1,duration:9,ease:'sine.inOut',repeat:-1,yoyo:true,transformOrigin:'center'});
 (function(){const d=document.querySelector('.cursor');window.addEventListener('mousemove',e=>{d.style.left=e.clientX+'px';d.style.top=e.clientY+'px';});document.addEventListener('mouseover',e=>{d.classList.toggle('hov',!!e.target.closest('[data-c],.opt,.btn,input,select'));});})();
 
-if(TEST_MODE){const tb=document.createElement('div');tb.textContent='🧪 MODO TESTE — sem campos obrigatórios';tb.style.cssText='position:fixed;top:9px;left:50%;transform:translateX(-50%);z-index:60;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:#34FF48;background:rgba(8,8,8,.85);border:1px solid rgba(52,255,72,.35);padding:3px 12px;border-radius:100px;';document.body.appendChild(tb);}
+if(TEST_MODE){const tb=document.createElement('div');tb.textContent='🧪 MODO TESTE — sem campos obrigatórios · não envia';tb.style.cssText='position:fixed;top:9px;left:50%;transform:translateX(-50%);z-index:60;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:#34FF48;background:rgba(8,8,8,.85);border:1px solid rgba(52,255,72,.35);padding:3px 12px;border-radius:100px;';document.body.appendChild(tb);}
 
 render(1);
 </script>
