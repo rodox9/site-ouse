@@ -12,6 +12,12 @@ _(nada pendente)_
 
 ---
 
+## [1.3.3] — 2026-06-20
+### Alterado
+- Express — pergunta "De onde vêm seus clientes" enxugada para 7 canais: **Redes Sociais · Google Ads · Meta Ads · Portais · Carteira · Indicação · Outros**.
+
+---
+
 ## [1.3.2] — 2026-06-20
 ### Corrigido
 - Express — **travamento / sobreposição** em telas altas (Q6, Q7, contato): a área de perguntas agora **rola** (overflow) com `align-items:safe center` e respiro inferior. Q6 com texto de apoio enxugado.
