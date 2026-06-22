@@ -252,6 +252,7 @@ function begin(){
     err.textContent='Preencha nome, empresa, WhatsApp, e-mail válidos e o cargo.';err.style.color='#ff6b6b';return;
   }
   answers.nome=nome;answers.empresa=empresa;answers.whatsapp=zap;answers.email=email;answers.cargo=cargo;
+  if(!TEST_MODE && !startedSent && answers.nome){startedSent=true;sendEmail(`🟡 LEAD INICIOU o Express — ${answers.nome} (${answers.cargo||'—'})`,false);sendWhats('🟡 LEAD INICIOU o Express');}
   advance();
 }
 
@@ -270,13 +271,14 @@ function maskPhone(e){const inp=e.target;let val=inp.value.replace(/\D/g,'').sli
   else if(val.length>2)out='('+val.slice(0,2)+') '+val.slice(2);
   else if(val.length)out='('+val; inp.value=out;}
 
-function submit(){
-  const L=x=>Array.isArray(x)?(x.join(', ')||'—'):(x||'—');
-  const resumo=`Nome: ${answers.nome}
-Empresa: ${answers.empresa}
+/* ===== captação progressiva: início · parcial · completo ===== */
+let startedSent=false, completed=false;
+const L=x=>Array.isArray(x)?(x.join(', ')||'—'):(x||'—');
+function buildResumo(){return `Nome: ${answers.nome||'—'}
+Empresa: ${answers.empresa||'—'}
 Cargo: ${L(answers.cargo)}
-WhatsApp: ${answers.whatsapp}
-E-mail: ${answers.email}
+WhatsApp: ${answers.whatsapp||'—'}
+E-mail: ${answers.email||'—'}
 Perfil: ${L(answers.perfil)}
 Corretores: ${L(answers.corretores)}
 Vendas 6m: ${L(answers.vendas)}
@@ -287,11 +289,33 @@ Origem clientes: ${L(answers.origem)}
 Organização: ${L(answers.organizacao)}
 Trava: ${L(answers.trava)}
 Meta: ${L(answers.meta)}
-Maturidade mkt: ${L(answers.maturidade)}`;
-  i='done'; renderDone(answers.nome);
-  if(WEB3FORMS_KEY){const fd=new FormData();fd.append('access_key',WEB3FORMS_KEY);fd.append('subject',`⚡ Diagnóstico EXPRESS — ${answers.nome} (${answers.cargo})`);fd.append('from_name','Site OUSE · Express');fd.append('email',answers.email);fd.append('nome',answers.nome);fd.append('empresa',answers.empresa);fd.append('whatsapp',answers.whatsapp);fd.append('resumo',resumo);fetch('https://api.web3forms.com/submit',{method:'POST',body:fd}).catch(()=>{});}
-  if(WHATSAPP_PHONE&&WHATSAPP_APIKEY){const msg=encodeURIComponent('⚡ Diagnóstico EXPRESS\n\n'+resumo);fetch(`https://api.callmebot.com/whatsapp.php?phone=${WHATSAPP_PHONE}&text=${msg}&apikey=${WHATSAPP_APIKEY}`,{mode:'no-cors'}).catch(()=>{});}
+Maturidade mkt: ${L(answers.maturidade)}`;}
+function sendEmail(subject,beacon){
+  if(!WEB3FORMS_KEY)return;
+  const fd=new FormData();
+  fd.append('access_key',WEB3FORMS_KEY);fd.append('subject',subject);fd.append('from_name','Site OUSE · Express');
+  fd.append('email',answers.email||'sem-email@ouse.com.br');fd.append('nome',answers.nome||'—');fd.append('empresa',answers.empresa||'—');fd.append('whatsapp',answers.whatsapp||'—');
+  fd.append('resumo',buildResumo());
+  if(beacon&&navigator.sendBeacon){try{navigator.sendBeacon('https://api.web3forms.com/submit',fd);}catch(e){}}
+  else fetch('https://api.web3forms.com/submit',{method:'POST',body:fd}).catch(()=>{});
 }
+function sendWhats(prefix){
+  if(!WHATSAPP_PHONE||!WHATSAPP_APIKEY)return;
+  const msg=encodeURIComponent(prefix+'\n\n'+buildResumo());
+  fetch(`https://api.callmebot.com/whatsapp.php?phone=${WHATSAPP_PHONE}&text=${msg}&apikey=${WHATSAPP_APIKEY}`,{mode:'no-cors'}).catch(()=>{});
+}
+function submit(){
+  completed=true; i='done'; renderDone(answers.nome);
+  if(TEST_MODE)return;
+  sendEmail(`✅ Diagnóstico EXPRESS COMPLETO — ${answers.nome} (${answers.cargo})`,false);
+  sendWhats('✅ Diagnóstico EXPRESS COMPLETO');
+}
+/* abandono: se começou e não terminou, salva o parcial ao sair da página */
+window.addEventListener('pagehide',()=>{
+  if(TEST_MODE||!startedSent||completed)return;
+  const onde=(typeof i==='number'&&Q[i]&&!Q[i].contact)?('pergunta '+(qFlow().indexOf(i)+1)):'contato';
+  sendEmail(`🟠 EXPRESS PARCIAL — ${answers.nome||'lead'} parou em ${onde}`,true);
+});
 
 function renderDone(nome){
   prog.style.width='100%';counter.textContent='';backBtn.classList.add('hidden');kbd.textContent='';

@@ -12,6 +12,16 @@ _(nada pendente)_
 
 ---
 
+## [1.4.0] — 2026-06-20
+### Adicionado
+- Express — **captação progressiva** (não perde quem preenche só parte):
+  - 🟡 **Início** — ao passar do contato, dispara e-mail **+** WhatsApp na hora (time pode atender em minutos)
+  - 🟠 **Parcial** — se abandona no meio, salva o que respondeu (via `sendBeacon`) ao sair da página
+  - ✅ **Completo** — ao terminar, envia tudo
+  - No modo teste (`?teste=1`) nada é enviado
+
+---
+
 ## [1.3.4] — 2026-06-20
 ### Adicionado
 - Express — **modo teste** via `?teste=1`: navega sem campos obrigatórios (badge "🧪 MODO TESTE"). Sem o parâmetro, o formulário segue exigindo tudo (produção protegida).
