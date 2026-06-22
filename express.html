@@ -37,8 +37,8 @@ a{color:inherit;text-decoration:none;}
 .glow.a{background:radial-gradient(circle,rgba(255,63,52,.18),transparent 65%);top:-15%;right:-10%;}
 .glow.b{background:radial-gradient(circle,rgba(255,63,52,.10),transparent 65%);bottom:-20%;left:-12%;}
 
-.top{position:fixed;top:0;left:0;right:0;z-index:50;padding:20px 5vw 0;}
-.top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.top{position:fixed;top:0;left:0;right:0;z-index:50;padding:18px 5vw 0;background:linear-gradient(180deg,var(--black) 40%,transparent);}
+.top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .brand{font-family:var(--cond);font-weight:900;font-size:22px;letter-spacing:.04em;}
 .brand b{color:var(--orange);}
 .counter{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.1em;}
@@ -48,37 +48,43 @@ a{color:inherit;text-decoration:none;}
 .prog{height:3px;background:var(--rule);border-radius:3px;overflow:hidden;}
 .prog i{display:block;height:100%;width:0;background:var(--orange);border-radius:3px;transition:width .7s cubic-bezier(.4,0,.2,1);}
 
-.stage{position:relative;z-index:10;height:100%;display:flex;align-items:center;padding:90px 5vw 100px;}
-.screen{width:100%;max-width:880px;margin:0 auto;}
-.eyebrow{font-family:var(--cond);font-weight:900;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--orange);display:inline-flex;align-items:center;gap:10px;margin-bottom:18px;}
+/* stage rolável — corrige travamento/sobreposição em telas altas (Q6, Q7, contato) */
+.stage{position:relative;z-index:10;height:100%;overflow-y:auto;overflow-x:hidden;display:flex;align-items:safe center;padding:96px 5vw 132px;}
+.stage::-webkit-scrollbar{width:8px;}.stage::-webkit-scrollbar-thumb{background:var(--mid);border-radius:4px;}
+.screen{width:100%;max-width:860px;margin:0 auto;}
+.eyebrow{font-family:var(--cond);font-weight:900;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--orange);display:inline-flex;align-items:center;gap:10px;margin-bottom:16px;}
 .eyebrow::before{content:'';width:26px;height:2px;background:var(--orange);}
-.q-num{font-family:var(--cond);font-weight:900;font-size:clamp(40px,7vw,90px);line-height:.8;color:rgba(244,241,236,.12);letter-spacing:-.04em;margin-bottom:4px;}
-.q-title{font-family:var(--cond);font-weight:900;text-transform:uppercase;font-size:clamp(28px,4.6vw,58px);line-height:.98;letter-spacing:-.02em;margin-bottom:10px;max-width:20ch;}
-.q-help{font-size:14px;color:var(--muted);margin-bottom:26px;max-width:54ch;line-height:1.55;}
-.opts{display:flex;flex-direction:column;gap:10px;margin-top:26px;max-width:640px;}
-.opt{display:flex;align-items:center;gap:16px;padding:16px 20px;border:1px solid var(--rule);border-radius:6px;background:rgba(20,20,20,.6);cursor:pointer;transition:transform .18s,border-color .2s,background .2s;backdrop-filter:blur(4px);}
+.q-num{font-family:var(--cond);font-weight:900;font-size:clamp(34px,5.5vw,72px);line-height:.8;color:rgba(244,241,236,.12);letter-spacing:-.04em;margin-bottom:4px;}
+.q-title{font-family:var(--cond);font-weight:900;text-transform:uppercase;font-size:clamp(26px,4vw,50px);line-height:1;letter-spacing:-.02em;margin-bottom:8px;max-width:22ch;}
+.q-help{font-size:13.5px;color:var(--muted);margin-bottom:20px;max-width:52ch;line-height:1.5;}
+.opts{display:flex;flex-direction:column;gap:9px;margin-top:22px;max-width:620px;}
+.opt{display:flex;align-items:center;gap:15px;padding:14px 18px;border:1px solid var(--rule);border-radius:6px;background:rgba(20,20,20,.6);cursor:pointer;transition:transform .18s,border-color .2s,background .2s;backdrop-filter:blur(4px);}
 .opt:hover{transform:translateX(6px);border-color:var(--muted);background:var(--mid);}
-.opt .key{width:30px;height:30px;flex-shrink:0;border:1px solid var(--rule);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--cond);font-weight:900;font-size:14px;color:var(--muted);transition:all .2s;}
-.opt .tx{font-family:var(--body);font-weight:400;font-size:clamp(15px,1.7vw,18px);color:#ddd9d0;}
+.opt .key{width:28px;height:28px;flex-shrink:0;border:1px solid var(--rule);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--cond);font-weight:900;font-size:13px;color:var(--muted);transition:all .2s;}
+.opt .tx{font-family:var(--body);font-weight:400;font-size:clamp(14.5px,1.6vw,17px);color:#ddd9d0;}
 .opt:hover .key{border-color:var(--orange);color:var(--orange);}
 .opt.sel{border-color:var(--orange);background:rgba(255,63,52,.12);transform:translateX(6px);}
 .opt.sel .key{background:var(--orange);border-color:var(--orange);color:var(--black);}
 .opt.sel .tx{color:#fff;}
 .opt.check .key{border-radius:50%;}
 
-.cta-row{margin-top:30px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
-.btn{font-family:var(--cond);font-weight:900;font-size:16px;letter-spacing:.04em;text-transform:uppercase;padding:15px 32px;border-radius:100px;cursor:pointer;border:1px solid var(--orange);background:var(--orange);color:var(--black);display:inline-flex;align-items:center;gap:12px;transition:transform .25s,box-shadow .25s,opacity .2s;}
+.cta-row{margin-top:26px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+.btn{font-family:var(--cond);font-weight:900;font-size:16px;letter-spacing:.04em;text-transform:uppercase;padding:14px 30px;border-radius:100px;cursor:pointer;border:1px solid var(--orange);background:var(--orange);color:var(--black);display:inline-flex;align-items:center;gap:12px;transition:transform .25s,box-shadow .25s,opacity .2s;}
 .btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(255,63,52,.32);}
 .btn[disabled]{opacity:.35;pointer-events:none;}
 .btn-ghost{background:transparent;color:var(--muted);border-color:var(--rule);}
 .btn-ghost:hover{color:var(--white);border-color:var(--muted);box-shadow:none;}
 .hint{font-family:var(--mono);font-size:11px;color:rgba(244,241,236,.3);letter-spacing:.04em;}
 
-.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px;max-width:600px;}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px;max-width:600px;}
 .field{display:flex;flex-direction:column;gap:7px;}
+.field.full{grid-column:1/-1;}
 .field label{font-family:var(--cond);font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
-.field input{background:rgba(20,20,20,.7);border:1px solid var(--rule);border-radius:6px;padding:15px 16px;color:#fff;font-family:var(--body);font-size:16px;transition:border-color .2s;}
-.field input:focus{outline:none;border-color:var(--orange);}
+.field input,.field select{background:rgba(20,20,20,.7);border:1px solid var(--rule);border-radius:6px;padding:14px 16px;color:#fff;font-family:var(--body);font-size:16px;transition:border-color .2s;}
+.field input:focus,.field select:focus{outline:none;border-color:var(--orange);}
+.field select{appearance:none;cursor:pointer;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 20px) 22px,calc(100% - 14px) 22px;background-size:6px 6px,6px 6px;background-repeat:no-repeat;}
+.field select option{background:#141414;}
+.reveal-wrap{margin-top:14px;max-width:600px;}
 @media(max-width:620px){.fields{grid-template-columns:1fr;}}
 
 .big-h{font-family:var(--cond);font-weight:900;text-transform:uppercase;font-size:clamp(40px,8vw,96px);line-height:.86;letter-spacing:-.03em;}
@@ -86,10 +92,10 @@ a{color:inherit;text-decoration:none;}
 .lead{font-size:clamp(16px,1.8vw,20px);color:#cfccc4;line-height:1.6;margin-top:22px;max-width:48ch;}
 .done-mark{width:78px;height:78px;border-radius:50%;background:var(--green);color:var(--black);display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:900;margin-bottom:28px;}
 
-.bk{position:fixed;left:5vw;bottom:30px;z-index:50;font-family:var(--cond);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:color .2s;}
+.bk{position:fixed;left:5vw;bottom:26px;z-index:50;font-family:var(--cond);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:color .2s;background:var(--black);padding:6px 10px;border-radius:6px;}
 .bk:hover{color:var(--white);}
 .bk.hidden{opacity:0;pointer-events:none;}
-.kbd{position:fixed;right:5vw;bottom:30px;z-index:50;font-family:var(--mono);font-size:10.5px;color:rgba(244,241,236,.3);letter-spacing:.04em;}
+.kbd{position:fixed;right:5vw;bottom:30px;z-index:50;font-family:var(--mono);font-size:10.5px;color:rgba(244,241,236,.3);letter-spacing:.04em;background:var(--black);padding:4px 8px;border-radius:4px;}
 @media(max-width:760px){.kbd{display:none;}}
 </style>
 </head>
@@ -112,32 +118,32 @@ a{color:inherit;text-decoration:none;}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
-/* ===== CONFIG (mesmos canais do diagnóstico) ===== */
+/* ===== CONFIG ===== */
 const WEB3FORMS_KEY   = '6894e59b-da65-4152-bb85-fc03193c11a5';
 const WHATSAPP_PHONE  = '554195351000';
 const WHATSAPP_APIKEY = '7706708';
+const CARGOS=['Sócio / fundador','Diretor','Gestor comercial','Corretor','Marketing','Outro'];
 
-/* ===== TELAS: contato (1º, igual ao outro form) + 11 perguntas ===== */
+/* ===== TELAS: contato (1º) + 11 perguntas ===== */
 const Q = [
   {id:'_contato', contact:true},
-  {id:'perfil', t:'Quem é você hoje?', opts:['Corretor autônomo','Corretor de imobiliária','Imobiliária pequena','Incorporadora pequena','Outro']},
-  {id:'corretores', t:'Quantos corretores atuam na sua operação hoje?', skipIf:a=>a.perfil==='Corretor autônomo', opts:['1 a 3','4 a 10','11 a 25','Mais de 25','Não se aplica']},
-  {id:'vendas', t:'Quantos milhões em vendas você realizou nos últimos 6 meses?', opts:['Ainda não vendi','Até R$ 1 milhão','R$ 1 a R$ 3 milhões','R$ 3 a R$ 10 milhões','Acima de R$ 10 milhões']},
-  {id:'trafego', t:'Hoje você tem alguém cuidando do tráfego pago?', opts:['Não','Eu mesmo faço','Freelancer','Agência','Equipe interna']},
-  {id:'site', t:'Você tem site próprio?', opts:['Não tenho','Tenho, mas quase não gera resultado','Tenho e recebo alguns contatos','Tenho e é uma fonte importante de leads']},
-  {id:'investimento', t:'Quanto você investe em marketing por mês no total?', help:'Considere o valor completo: anúncios, agência, freelancer, equipe interna e ferramentas.', opts:['Não invisto','Até R$ 500','R$ 500 a R$ 2.000','R$ 2.000 a R$ 5.000','Acima de R$ 5.000']},
+  {id:'perfil', t:'Quem é você hoje?', opts:['Corretor autônomo','Corretor de imobiliária','Imobiliária','Incorporadora','Outro']},
+  {id:'corretores', t:'Quantos corretores atuam na sua operação?', skipIf:a=>!['Imobiliária','Incorporadora','Outro'].includes(a.perfil), opts:['1 a 3','4 a 10','11 a 25','Mais de 25','Não se aplica']},
+  {id:'vendas', t:'Quanto você vendeu nos últimos 6 meses?', opts:['Ainda não vendi','Até R$ 1 milhão','R$ 1 a R$ 3 milhões','R$ 3 a R$ 10 milhões','Acima de R$ 10 milhões']},
+  {id:'trafego', t:'Quem cuida do seu tráfego pago hoje?', opts:['Ninguém','Eu mesmo faço','Freelancer','Agência','Equipe interna']},
+  {id:'site', t:'Você tem site próprio?', reveal:{id:'site_url',label:'Qual o endereço do site?',ph:'seusite.com.br',when:v=>v!=='Não tenho'}, opts:['Não tenho','Tenho, mas quase não gera resultado','Tenho e recebo alguns contatos','Tenho e é uma fonte importante de leads']},
+  {id:'investimento', t:'Quanto você investe em marketing por mês?', help:'Some tudo: anúncios, agência ou freelancer, equipe e ferramentas.', opts:['Não invisto','Até R$ 500','R$ 500 a R$ 2.000','R$ 2.000 a R$ 5.000','Acima de R$ 5.000']},
   {id:'origem', t:'De onde vêm seus clientes hoje?', help:'Pode marcar mais de um.', multi:true, opts:['Indicação','Instagram','Portais imobiliários','Google','Tráfego pago','Parcerias','Carteira de clientes','Base antiga','Outros']},
   {id:'organizacao', t:'Como você organiza seus clientes?', opts:['Só WhatsApp','Planilha','CRM simples','CRM com rotina comercial definida']},
   {id:'trava', t:'O que mais trava seu crescimento hoje?', opts:['Falta de leads','Falta de tempo','Baixa conversão','Marketing sem resultado','Não sei exatamente']},
   {id:'meta', t:'Qual sua principal meta agora?', opts:['Vender mais','Captar mais imóveis','Organizar minha operação','Melhorar marketing']},
-  {id:'maturidade', t:'Como você se sente em relação ao marketing imobiliário hoje?', opts:['Não entendo e não quero me envolver com isso','Não entendo, mas quero aprender o básico','Entendo um pouco, mas ainda me sinto perdido','Entendo o básico para acompanhar conversas e decisões','Entendo bem e participo ativamente das decisões']},
+  {id:'maturidade', t:'Como você se sente sobre marketing imobiliário hoje?', opts:['Não entendo e não quero me envolver','Não entendo, mas quero aprender o básico','Entendo um pouco, mas me sinto perdido','Entendo o básico pra acompanhar decisões','Entendo bem e participo das decisões']},
 ];
 const LETTERS='ABCDEFGHI';
 const answers={};
 let i=0, busy=false;
 const screen=document.getElementById('screen'),prog=document.getElementById('prog'),counter=document.getElementById('counter'),backBtn=document.getElementById('back'),kbd=document.getElementById('kbd');
 
-/* fluxo ativo (aplica regras condicionais como skipIf) */
 const flow=()=>Q.map((q,idx)=>idx).filter(idx=>!(Q[idx].skipIf&&Q[idx].skipIf(answers)));
 const qFlow=()=>flow().filter(idx=>!Q[idx].contact);
 const v=id=>(document.getElementById(id).value||'').trim();
@@ -153,6 +159,7 @@ function render(dir){
         <div class="field"><label>Empresa</label><input id="f_empresa" type="text" autocomplete="organization" placeholder="Sua empresa"></div>
         <div class="field"><label>WhatsApp</label><input id="f_zap" type="tel" inputmode="numeric" autocomplete="tel" data-mask="phone" placeholder="(41) 99999-9999"></div>
         <div class="field"><label>E-mail</label><input id="f_email" type="email" inputmode="email" autocomplete="email" placeholder="voce@empresa.com.br"></div>
+        <div class="field full"><label>Seu cargo</label><select id="f_cargo"><option value="">Selecione...</option>${CARGOS.map(c=>`<option>${c}</option>`).join('')}</select></div>
       </div>
       <div class="cta-row"><button class="btn" id="begin">Começar →</button><span class="hint" id="ferr"></span></div>`;
   } else {
@@ -160,6 +167,7 @@ function render(dir){
       <div class="q-title">${q.t}</div>
       ${q.help?`<div class="q-help">${q.help}</div>`:''}
       <div class="opts">${q.opts.map((o,k)=>`<div class="opt ${q.multi?'check':''}" data-k="${k}" data-c><span class="key">${LETTERS[k]||k+1}</span><span class="tx">${o}</span></div>`).join('')}</div>
+      ${q.reveal?`<div class="reveal-wrap" id="revealWrap" style="display:none"><div class="field"><label>${q.reveal.label}</label><input id="${q.reveal.id}" type="text" placeholder="${q.reveal.ph}"></div><div class="cta-row"><button class="btn" id="revealCont">Continuar →</button></div></div>`:''}
       ${q.multi?`<div class="cta-row"><button class="btn" id="cont" disabled>Continuar →</button><span class="hint">marque os que se aplicam</span></div>`:''}`;
   }
   screen.innerHTML=html;
@@ -171,7 +179,7 @@ function render(dir){
   gsap.from(screen.querySelectorAll('.opt,.field,.cta-row'),{y:16,opacity:0,duration:.45,stagger:.05,delay:.12,ease:'power3.out'});
 
   if(q.contact){
-    [['nome','f_nome'],['empresa','f_empresa'],['whatsapp','f_zap'],['email','f_email']].forEach(([a,id])=>{if(answers[a])document.getElementById(id).value=answers[a];});
+    [['nome','f_nome'],['empresa','f_empresa'],['whatsapp','f_zap'],['email','f_email'],['cargo','f_cargo']].forEach(([a,id])=>{if(answers[a])document.getElementById(id).value=answers[a];});
     document.getElementById('f_zap').addEventListener('input',maskPhone);
     document.getElementById('begin').addEventListener('click',begin);
   } else if(q.multi && Array.isArray(answers[q.id])){
@@ -179,6 +187,7 @@ function render(dir){
     syncContinue();
   } else if(!q.multi && answers[q.id]){
     const s=q.opts.indexOf(answers[q.id]); if(s>=0)screen.querySelector(`.opt[data-k="${s}"]`)?.classList.add('sel');
+    if(q.reveal && q.reveal.when(answers[q.id])) openReveal(q,false);
   }
   if(!q.contact)attach(q);
 
@@ -191,6 +200,17 @@ function render(dir){
   gsap.to('#gB',{xPercent:(pos%2-0.5)*16,duration:1.4,ease:'power2.out'});
 }
 
+function openReveal(q,focus){
+  const wrap=document.getElementById('revealWrap'); if(!wrap)return;
+  wrap.style.display='';
+  const inp=document.getElementById(q.reveal.id);
+  if(answers[q.reveal.id])inp.value=answers[q.reveal.id];
+  const done=()=>{answers[q.reveal.id]=inp.value.trim();advance();};
+  document.getElementById('revealCont').onclick=done;
+  inp.onkeydown=e=>{if(e.key==='Enter')done();};
+  if(focus){gsap.from(wrap,{y:12,opacity:0,duration:.4,ease:'power3.out'});setTimeout(()=>inp.focus(),80);}
+}
+
 function attach(q){
   screen.querySelectorAll('.opt').forEach(o=>{
     o.addEventListener('click',()=>{
@@ -201,11 +221,15 @@ function attach(q){
         const idx=answers[q.id].indexOf(val); if(idx>=0)answers[q.id].splice(idx,1); else answers[q.id].push(val);
         syncContinue();
       } else {
-        if(busy)return; busy=true;
+        if(busy)return;
         screen.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));
         o.classList.add('sel'); answers[q.id]=val;
         gsap.fromTo(o,{scale:1},{scale:1.03,duration:.12,yoyo:true,repeat:1,ease:'power1.inOut'});
-        setTimeout(()=>{busy=false;advance();},420);
+        if(q.reveal){
+          if(q.reveal.when(val)){ openReveal(q,true); return; }
+          else { const w=document.getElementById('revealWrap'); if(w)w.style.display='none'; delete answers[q.reveal.id]; }
+        }
+        busy=true; setTimeout(()=>{busy=false;advance();},420);
       }
     });
   });
@@ -218,20 +242,20 @@ function back(){const f=flow(),pos=f.indexOf(i);if(pos>0)animOut(()=>{i=f[pos-1]
 function animOut(cb){gsap.to(screen,{x:-30,opacity:0,duration:.32,ease:'power2.in',onComplete:cb});}
 backBtn.addEventListener('click',back);
 
-/* contato (1ª tela) — tudo obrigatório */
+/* contato (1ª tela) — tudo obrigatório (inclui cargo) */
 function begin(){
-  const nome=v('f_nome'),empresa=v('f_empresa'),zap=v('f_zap'),email=v('f_email');
+  const nome=v('f_nome'),empresa=v('f_empresa'),zap=v('f_zap'),email=v('f_email'),cargo=v('f_cargo');
   const err=document.getElementById('ferr');
-  if(!nome||!empresa||zap.replace(/\D/g,'').length<10||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    err.textContent='Preencha nome, empresa, WhatsApp e e-mail válidos.';err.style.color='#ff6b6b';return;
+  if(!nome||!empresa||zap.replace(/\D/g,'').length<10||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||!cargo){
+    err.textContent='Preencha nome, empresa, WhatsApp, e-mail válidos e o cargo.';err.style.color='#ff6b6b';return;
   }
-  answers.nome=nome;answers.empresa=empresa;answers.whatsapp=zap;answers.email=email;
+  answers.nome=nome;answers.empresa=empresa;answers.whatsapp=zap;answers.email=email;answers.cargo=cargo;
   advance();
 }
 
-/* teclado */
 document.addEventListener('keydown',e=>{
   const q=Q[i]; if(!q||q.contact)return;
+  if(document.activeElement&&document.activeElement.tagName==='INPUT'&&q.reveal)return;
   if(e.key==='Backspace'){back();return;}
   if(e.key==='Enter'&&q.multi){advance();return;}
   let k=-1; if(/^[1-9]$/.test(e.key))k=+e.key-1; else {const up=e.key.toUpperCase();if(LETTERS.includes(up))k=LETTERS.indexOf(up);}
@@ -248,13 +272,14 @@ function submit(){
   const L=x=>Array.isArray(x)?(x.join(', ')||'—'):(x||'—');
   const resumo=`Nome: ${answers.nome}
 Empresa: ${answers.empresa}
+Cargo: ${L(answers.cargo)}
 WhatsApp: ${answers.whatsapp}
 E-mail: ${answers.email}
 Perfil: ${L(answers.perfil)}
 Corretores: ${L(answers.corretores)}
 Vendas 6m: ${L(answers.vendas)}
 Tráfego pago: ${L(answers.trafego)}
-Site: ${L(answers.site)}
+Site: ${L(answers.site)}${answers.site_url?` (${answers.site_url})`:''}
 Investimento/mês: ${L(answers.investimento)}
 Origem clientes: ${L(answers.origem)}
 Organização: ${L(answers.organizacao)}
@@ -262,7 +287,7 @@ Trava: ${L(answers.trava)}
 Meta: ${L(answers.meta)}
 Maturidade mkt: ${L(answers.maturidade)}`;
   i='done'; renderDone(answers.nome);
-  if(WEB3FORMS_KEY){const fd=new FormData();fd.append('access_key',WEB3FORMS_KEY);fd.append('subject',`⚡ Diagnóstico EXPRESS — ${answers.nome}`);fd.append('from_name','Site OUSE · Express');fd.append('email',answers.email);fd.append('nome',answers.nome);fd.append('empresa',answers.empresa);fd.append('whatsapp',answers.whatsapp);fd.append('resumo',resumo);fetch('https://api.web3forms.com/submit',{method:'POST',body:fd}).catch(()=>{});}
+  if(WEB3FORMS_KEY){const fd=new FormData();fd.append('access_key',WEB3FORMS_KEY);fd.append('subject',`⚡ Diagnóstico EXPRESS — ${answers.nome} (${answers.cargo})`);fd.append('from_name','Site OUSE · Express');fd.append('email',answers.email);fd.append('nome',answers.nome);fd.append('empresa',answers.empresa);fd.append('whatsapp',answers.whatsapp);fd.append('resumo',resumo);fetch('https://api.web3forms.com/submit',{method:'POST',body:fd}).catch(()=>{});}
   if(WHATSAPP_PHONE&&WHATSAPP_APIKEY){const msg=encodeURIComponent('⚡ Diagnóstico EXPRESS\n\n'+resumo);fetch(`https://api.callmebot.com/whatsapp.php?phone=${WHATSAPP_PHONE}&text=${msg}&apikey=${WHATSAPP_APIKEY}`,{mode:'no-cors'}).catch(()=>{});}
 }
 
@@ -278,7 +303,7 @@ function renderDone(nome){
 
 gsap.to('#gA',{scale:1.12,duration:7,ease:'sine.inOut',repeat:-1,yoyo:true,transformOrigin:'center'});
 gsap.to('#gB',{scale:1.1,duration:9,ease:'sine.inOut',repeat:-1,yoyo:true,transformOrigin:'center'});
-(function(){const d=document.querySelector('.cursor');window.addEventListener('mousemove',e=>{d.style.left=e.clientX+'px';d.style.top=e.clientY+'px';});document.addEventListener('mouseover',e=>{d.classList.toggle('hov',!!e.target.closest('[data-c],.opt,.btn,input'));});})();
+(function(){const d=document.querySelector('.cursor');window.addEventListener('mousemove',e=>{d.style.left=e.clientX+'px';d.style.top=e.clientY+'px';});document.addEventListener('mouseover',e=>{d.classList.toggle('hov',!!e.target.closest('[data-c],.opt,.btn,input,select'));});})();
 
 render(1);
 </script>

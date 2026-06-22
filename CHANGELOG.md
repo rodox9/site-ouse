@@ -12,6 +12,19 @@ _(nada pendente)_
 
 ---
 
+## [1.3.2] — 2026-06-20
+### Corrigido
+- Express — **travamento / sobreposição** em telas altas (Q6, Q7, contato): a área de perguntas agora **rola** (overflow) com `align-items:safe center` e respiro inferior. Q6 com texto de apoio enxugado.
+### Adicionado
+- **Cargo** do respondente na 1ª tela (obrigatório).
+- **Site:** ao indicar que tem site, abre um campo para digitar a **URL**.
+### Alterado
+- Perfil: "Imobiliária pequena" → **Imobiliária**, "Incorporadora pequena" → **Incorporadora**.
+- **"Quantos corretores"** só aparece para **Imobiliária / Incorporadora / Outro**.
+- Copy (neurociência de formulários): Q3 → "Quanto você vendeu nos últimos 6 meses?"; Q4 → "Quem cuida do seu tráfego pago hoje?".
+
+---
+
 ## [1.3.1] — 2026-06-20
 ### Alterado
 - Diagnóstico Express — **contato agora é a 1ª tela** (nome, empresa, WhatsApp, e-mail — mesmo início do diagnóstico completo), **tudo obrigatório**.
