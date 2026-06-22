@@ -12,6 +12,13 @@ _(nada pendente)_
 
 ---
 
+## [1.3.1] — 2026-06-20
+### Alterado
+- Diagnóstico Express — **contato agora é a 1ª tela** (nome, empresa, WhatsApp, e-mail — mesmo início do diagnóstico completo), **tudo obrigatório**.
+- **Regra condicional:** "Corretor autônomo" **pula** a pergunta "quantos corretores" — contador ajusta para `/ 10`.
+
+---
+
 ## [1.3.0] — 2026-06-20
 ### Adicionado
 - **Diagnóstico Express** (`express.html`) — funil **não-listado** (`noindex`, acessível só por link) para campanhas específicas.

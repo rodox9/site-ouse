@@ -27,19 +27,16 @@ body{font-family:var(--body);background:var(--black);color:var(--white);font-wei
 a{color:inherit;text-decoration:none;}
 .hand{font-family:'Permanent Marker',cursive;color:var(--orange);font-weight:400;}
 
-/* cursor */
 .cursor{position:fixed;top:0;left:0;width:12px;height:12px;border-radius:50%;background:var(--orange);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width .25s,height .25s;}
 .cursor.hov{width:42px;height:42px;}
 @media(hover:none),(max-width:900px){.cursor{display:none!important;}}
 
-/* background glows */
 .bg{position:fixed;inset:0;z-index:0;overflow:hidden;}
 .bg-grid{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 79px,rgba(244,241,236,.018) 80px),repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(244,241,236,.018) 80px);}
-.glow{position:absolute;width:60vw;height:60vw;border-radius:50%;filter:none;will-change:transform;}
+.glow{position:absolute;width:60vw;height:60vw;border-radius:50%;will-change:transform;}
 .glow.a{background:radial-gradient(circle,rgba(255,63,52,.18),transparent 65%);top:-15%;right:-10%;}
 .glow.b{background:radial-gradient(circle,rgba(255,63,52,.10),transparent 65%);bottom:-20%;left:-12%;}
 
-/* top bar */
 .top{position:fixed;top:0;left:0;right:0;z-index:50;padding:20px 5vw 0;}
 .top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
 .brand{font-family:var(--cond);font-weight:900;font-size:22px;letter-spacing:.04em;}
@@ -51,7 +48,6 @@ a{color:inherit;text-decoration:none;}
 .prog{height:3px;background:var(--rule);border-radius:3px;overflow:hidden;}
 .prog i{display:block;height:100%;width:0;background:var(--orange);border-radius:3px;transition:width .7s cubic-bezier(.4,0,.2,1);}
 
-/* stage */
 .stage{position:relative;z-index:10;height:100%;display:flex;align-items:center;padding:90px 5vw 100px;}
 .screen{width:100%;max-width:880px;margin:0 auto;}
 .eyebrow{font-family:var(--cond);font-weight:900;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--orange);display:inline-flex;align-items:center;gap:10px;margin-bottom:18px;}
@@ -78,16 +74,13 @@ a{color:inherit;text-decoration:none;}
 .btn-ghost:hover{color:var(--white);border-color:var(--muted);box-shadow:none;}
 .hint{font-family:var(--mono);font-size:11px;color:rgba(244,241,236,.3);letter-spacing:.04em;}
 
-/* fields (contato) */
 .fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px;max-width:600px;}
 .field{display:flex;flex-direction:column;gap:7px;}
-.field.full{grid-column:1/-1;}
 .field label{font-family:var(--cond);font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
 .field input{background:rgba(20,20,20,.7);border:1px solid var(--rule);border-radius:6px;padding:15px 16px;color:#fff;font-family:var(--body);font-size:16px;transition:border-color .2s;}
 .field input:focus{outline:none;border-color:var(--orange);}
 @media(max-width:620px){.fields{grid-template-columns:1fr;}}
 
-/* intro / done */
 .big-h{font-family:var(--cond);font-weight:900;text-transform:uppercase;font-size:clamp(40px,8vw,96px);line-height:.86;letter-spacing:-.03em;}
 .big-h .o{color:var(--orange);}
 .lead{font-size:clamp(16px,1.8vw,20px);color:#cfccc4;line-height:1.6;margin-top:22px;max-width:48ch;}
@@ -124,42 +117,46 @@ const WEB3FORMS_KEY   = '6894e59b-da65-4152-bb85-fc03193c11a5';
 const WHATSAPP_PHONE  = '554195351000';
 const WHATSAPP_APIKEY = '7706708';
 
-/* ===== PERGUNTAS ===== */
+/* ===== TELAS: contato (1º, igual ao outro form) + 11 perguntas ===== */
 const Q = [
+  {id:'_contato', contact:true},
   {id:'perfil', t:'Quem é você hoje?', opts:['Corretor autônomo','Corretor de imobiliária','Imobiliária pequena','Incorporadora pequena','Outro']},
-  {id:'corretores', t:'Se você é imobiliária, quantos corretores atuam hoje?', opts:['1 a 3','4 a 10','11 a 25','Mais de 25','Não se aplica']},
+  {id:'corretores', t:'Quantos corretores atuam na sua operação hoje?', skipIf:a=>a.perfil==='Corretor autônomo', opts:['1 a 3','4 a 10','11 a 25','Mais de 25','Não se aplica']},
   {id:'vendas', t:'Quantos milhões em vendas você realizou nos últimos 6 meses?', opts:['Ainda não vendi','Até R$ 1 milhão','R$ 1 a R$ 3 milhões','R$ 3 a R$ 10 milhões','Acima de R$ 10 milhões']},
   {id:'trafego', t:'Hoje você tem alguém cuidando do tráfego pago?', opts:['Não','Eu mesmo faço','Freelancer','Agência','Equipe interna']},
   {id:'site', t:'Você tem site próprio?', opts:['Não tenho','Tenho, mas quase não gera resultado','Tenho e recebo alguns contatos','Tenho e é uma fonte importante de leads']},
-  {id:'investimento', t:'Quanto você investe em marketing por mês no total?', help:'Considere o valor completo da operação: anúncios, agência, freelancer, equipe interna e ferramentas.', opts:['Não invisto','Até R$ 500','R$ 500 a R$ 2.000','R$ 2.000 a R$ 5.000','Acima de R$ 5.000']},
+  {id:'investimento', t:'Quanto você investe em marketing por mês no total?', help:'Considere o valor completo: anúncios, agência, freelancer, equipe interna e ferramentas.', opts:['Não invisto','Até R$ 500','R$ 500 a R$ 2.000','R$ 2.000 a R$ 5.000','Acima de R$ 5.000']},
   {id:'origem', t:'De onde vêm seus clientes hoje?', help:'Pode marcar mais de um.', multi:true, opts:['Indicação','Instagram','Portais imobiliários','Google','Tráfego pago','Parcerias','Carteira de clientes','Base antiga','Outros']},
   {id:'organizacao', t:'Como você organiza seus clientes?', opts:['Só WhatsApp','Planilha','CRM simples','CRM com rotina comercial definida']},
   {id:'trava', t:'O que mais trava seu crescimento hoje?', opts:['Falta de leads','Falta de tempo','Baixa conversão','Marketing sem resultado','Não sei exatamente']},
   {id:'meta', t:'Qual sua principal meta agora?', opts:['Vender mais','Captar mais imóveis','Organizar minha operação','Melhorar marketing']},
   {id:'maturidade', t:'Como você se sente em relação ao marketing imobiliário hoje?', opts:['Não entendo e não quero me envolver com isso','Não entendo, mas quero aprender o básico','Entendo um pouco, mas ainda me sinto perdido','Entendo o básico para acompanhar conversas e decisões','Entendo bem e participo ativamente das decisões']},
-  {id:'_contato', t:'Quase lá. Onde mandamos seu diagnóstico?', contact:true},
 ];
 const LETTERS='ABCDEFGHI';
 const answers={};
-let i=0;
+let i=0, busy=false;
 const screen=document.getElementById('screen'),prog=document.getElementById('prog'),counter=document.getElementById('counter'),backBtn=document.getElementById('back'),kbd=document.getElementById('kbd');
-let busy=false;
+
+/* fluxo ativo (aplica regras condicionais como skipIf) */
+const flow=()=>Q.map((q,idx)=>idx).filter(idx=>!(Q[idx].skipIf&&Q[idx].skipIf(answers)));
+const qFlow=()=>flow().filter(idx=>!Q[idx].contact);
+const v=id=>(document.getElementById(id).value||'').trim();
 
 function render(dir){
-  const q=Q[i];
-  let html='';
+  const q=Q[i]; let html='';
   if(q.contact){
     html=`<div class="eyebrow">Diagnóstico Express</div>
-      <div class="q-title">Quase lá. <span class="hand" style="font-size:.8em">onde mandamos seu diagnóstico?</span></div>
-      <div class="q-help">Sem spam. É só pra te enviar a leitura do seu momento.</div>
+      <div class="q-title">Antes de começar, <span class="hand" style="font-size:.78em">quem é você?</span></div>
+      <div class="q-help">Tudo obrigatório — é assim que a OUSE manda seu diagnóstico.</div>
       <div class="fields">
-        <div class="field full"><label>Nome</label><input id="f_nome" type="text" autocomplete="name" placeholder="Seu nome"></div>
-        <div class="field full"><label>WhatsApp</label><input id="f_zap" type="tel" inputmode="numeric" autocomplete="tel" data-mask="phone" placeholder="(41) 99999-9999"></div>
-        <div class="field full"><label>E-mail (opcional)</label><input id="f_email" type="email" inputmode="email" autocomplete="email" placeholder="voce@empresa.com.br"></div>
+        <div class="field"><label>Nome</label><input id="f_nome" type="text" autocomplete="name" placeholder="Seu nome"></div>
+        <div class="field"><label>Empresa</label><input id="f_empresa" type="text" autocomplete="organization" placeholder="Sua empresa"></div>
+        <div class="field"><label>WhatsApp</label><input id="f_zap" type="tel" inputmode="numeric" autocomplete="tel" data-mask="phone" placeholder="(41) 99999-9999"></div>
+        <div class="field"><label>E-mail</label><input id="f_email" type="email" inputmode="email" autocomplete="email" placeholder="voce@empresa.com.br"></div>
       </div>
-      <div class="cta-row"><button class="btn" id="send">Ver meu resultado →</button><span class="hint" id="ferr"></span></div>`;
+      <div class="cta-row"><button class="btn" id="begin">Começar →</button><span class="hint" id="ferr"></span></div>`;
   } else {
-    html=`<div class="q-num">${String(i+1).padStart(2,'0')}</div>
+    html=`<div class="q-num">${String(qFlow().indexOf(i)+1).padStart(2,'0')}</div>
       <div class="q-title">${q.t}</div>
       ${q.help?`<div class="q-help">${q.help}</div>`:''}
       <div class="opts">${q.opts.map((o,k)=>`<div class="opt ${q.multi?'check':''}" data-k="${k}" data-c><span class="key">${LETTERS[k]||k+1}</span><span class="tx">${o}</span></div>`).join('')}</div>
@@ -167,97 +164,92 @@ function render(dir){
   }
   screen.innerHTML=html;
 
-  // entrada animada
-  const fromX = dir<0?-40:40;
+  const fromX=dir<0?-40:40;
   gsap.fromTo(screen,{x:fromX,opacity:0},{x:0,opacity:1,duration:.5,ease:'power3.out'});
   gsap.from(screen.querySelectorAll('.q-num,.eyebrow'),{y:18,opacity:0,duration:.5,ease:'power3.out'});
   gsap.from(screen.querySelector('.q-title'),{y:22,opacity:0,duration:.55,delay:.05,ease:'power3.out'});
   gsap.from(screen.querySelectorAll('.opt,.field,.cta-row'),{y:16,opacity:0,duration:.45,stagger:.05,delay:.12,ease:'power3.out'});
 
-  // estado salvo
-  if(q.multi && Array.isArray(answers[q.id])) {
-    screen.querySelectorAll('.opt').forEach(o=>{ if(answers[q.id].includes(q.opts[+o.dataset.k])) o.classList.add('sel'); });
+  if(q.contact){
+    [['nome','f_nome'],['empresa','f_empresa'],['whatsapp','f_zap'],['email','f_email']].forEach(([a,id])=>{if(answers[a])document.getElementById(id).value=answers[a];});
+    document.getElementById('f_zap').addEventListener('input',maskPhone);
+    document.getElementById('begin').addEventListener('click',begin);
+  } else if(q.multi && Array.isArray(answers[q.id])){
+    screen.querySelectorAll('.opt').forEach(o=>{if(answers[q.id].includes(q.opts[+o.dataset.k]))o.classList.add('sel');});
     syncContinue();
-  } else if(!q.multi && !q.contact && answers[q.id]){
-    const sel=q.opts.indexOf(answers[q.id]); if(sel>=0)screen.querySelector(`.opt[data-k="${sel}"]`)?.classList.add('sel');
+  } else if(!q.multi && answers[q.id]){
+    const s=q.opts.indexOf(answers[q.id]); if(s>=0)screen.querySelector(`.opt[data-k="${s}"]`)?.classList.add('sel');
   }
+  if(!q.contact)attach(q);
 
-  attach(q);
-  // progresso (11 perguntas + contato = 12 telas)
-  prog.style.width=((i)/(Q.length-1))*100+'%';
-  counter.innerHTML = q.contact?'CONTATO' : `<b>${String(i+1).padStart(2,'0')}</b> / ${Q.length-1}`;
-  backBtn.classList.toggle('hidden', i===0);
-  kbd.textContent = q.contact?'enter pra enviar':(q.multi?'1–9 marca · enter continua':'A–E ou 1–9 pra escolher');
-
-  // glow drift por pergunta
-  gsap.to('#gA',{xPercent:(i%3-1)*14,yPercent:(i%2)*10,duration:1.2,ease:'power2.out'});
-  gsap.to('#gB',{xPercent:(i%2-0.5)*16,duration:1.4,ease:'power2.out'});
-
-  if(q.contact){ const z=document.getElementById('f_zap'); z&&z.addEventListener('input',maskPhone); }
+  const f=flow(), pos=f.indexOf(i);
+  prog.style.width=(pos/(f.length-1))*100+'%';
+  counter.innerHTML = q.contact?'CONTATO':`<b>${String(qFlow().indexOf(i)+1).padStart(2,'0')}</b> / ${qFlow().length}`;
+  backBtn.classList.toggle('hidden', pos===0);
+  kbd.textContent = q.contact?'preencha e clique começar':(q.multi?'1–9 marca · enter continua':'A–E ou 1–9 pra escolher');
+  gsap.to('#gA',{xPercent:(pos%3-1)*14,yPercent:(pos%2)*10,duration:1.2,ease:'power2.out'});
+  gsap.to('#gB',{xPercent:(pos%2-0.5)*16,duration:1.4,ease:'power2.out'});
 }
 
 function attach(q){
-  if(q.contact){ document.getElementById('send').addEventListener('click',submit); return; }
   screen.querySelectorAll('.opt').forEach(o=>{
     o.addEventListener('click',()=>{
       const val=q.opts[+o.dataset.k];
       if(q.multi){
         o.classList.toggle('sel');
         answers[q.id]=answers[q.id]||[];
-        const idx=answers[q.id].indexOf(val);
-        if(idx>=0)answers[q.id].splice(idx,1); else answers[q.id].push(val);
+        const idx=answers[q.id].indexOf(val); if(idx>=0)answers[q.id].splice(idx,1); else answers[q.id].push(val);
         syncContinue();
       } else {
         if(busy)return; busy=true;
         screen.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));
         o.classList.add('sel'); answers[q.id]=val;
         gsap.fromTo(o,{scale:1},{scale:1.03,duration:.12,yoyo:true,repeat:1,ease:'power1.inOut'});
-        setTimeout(()=>{ busy=false; next(); },420);
+        setTimeout(()=>{busy=false;advance();},420);
       }
     });
   });
-  if(q.multi){ const c=document.getElementById('cont'); c&&c.addEventListener('click',()=>next()); }
+  if(q.multi){const c=document.getElementById('cont');c&&c.addEventListener('click',advance);}
 }
-function syncContinue(){ const q=Q[i],c=document.getElementById('cont'); if(c)c.disabled=!(answers[q.id]&&answers[q.id].length); }
+function syncContinue(){const q=Q[i],c=document.getElementById('cont');if(c)c.disabled=!(answers[q.id]&&answers[q.id].length);}
 
-function next(){ if(i<Q.length-1){ animOut(()=>{ i++; render(1); }); } }
-function prev(){ if(i>0){ animOut(()=>{ i--; render(-1); }); } }
-function animOut(cb){ gsap.to(screen,{x:-30,opacity:0,duration:.32,ease:'power2.in',onComplete:cb}); }
+function advance(){const f=flow(),pos=f.indexOf(i);if(pos>=f.length-1){submit();return;}animOut(()=>{i=f[pos+1];render(1);});}
+function back(){const f=flow(),pos=f.indexOf(i);if(pos>0)animOut(()=>{i=f[pos-1];render(-1);});}
+function animOut(cb){gsap.to(screen,{x:-30,opacity:0,duration:.32,ease:'power2.in',onComplete:cb});}
+backBtn.addEventListener('click',back);
 
-backBtn.addEventListener('click',prev);
+/* contato (1ª tela) — tudo obrigatório */
+function begin(){
+  const nome=v('f_nome'),empresa=v('f_empresa'),zap=v('f_zap'),email=v('f_email');
+  const err=document.getElementById('ferr');
+  if(!nome||!empresa||zap.replace(/\D/g,'').length<10||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    err.textContent='Preencha nome, empresa, WhatsApp e e-mail válidos.';err.style.color='#ff6b6b';return;
+  }
+  answers.nome=nome;answers.empresa=empresa;answers.whatsapp=zap;answers.email=email;
+  advance();
+}
 
 /* teclado */
 document.addEventListener('keydown',e=>{
   const q=Q[i]; if(!q||q.contact)return;
-  if(e.key==='Backspace'){prev();return;}
-  if(e.key==='Enter'&&q.multi){next();return;}
-  let k=-1;
-  if(/^[1-9]$/.test(e.key))k=+e.key-1;
-  else { const up=e.key.toUpperCase(); if(LETTERS.includes(up))k=LETTERS.indexOf(up); }
-  if(k>=0){ const o=screen.querySelector(`.opt[data-k="${k}"]`); if(o)o.click(); }
+  if(e.key==='Backspace'){back();return;}
+  if(e.key==='Enter'&&q.multi){advance();return;}
+  let k=-1; if(/^[1-9]$/.test(e.key))k=+e.key-1; else {const up=e.key.toUpperCase();if(LETTERS.includes(up))k=LETTERS.indexOf(up);}
+  if(k>=0){const o=screen.querySelector(`.opt[data-k="${k}"]`);if(o)o.click();}
 });
 
-/* máscara telefone */
-function maskPhone(e){ const inp=e.target; let v=inp.value.replace(/\D/g,'').slice(0,11),out='';
-  if(v.length>10)out='('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7);
-  else if(v.length>6)out='('+v.slice(0,2)+') '+v.slice(2,6)+'-'+v.slice(6);
-  else if(v.length>2)out='('+v.slice(0,2)+') '+v.slice(2);
-  else if(v.length)out='('+v; inp.value=out;
-}
+function maskPhone(e){const inp=e.target;let val=inp.value.replace(/\D/g,'').slice(0,11),out='';
+  if(val.length>10)out='('+val.slice(0,2)+') '+val.slice(2,7)+'-'+val.slice(7);
+  else if(val.length>6)out='('+val.slice(0,2)+') '+val.slice(2,6)+'-'+val.slice(6);
+  else if(val.length>2)out='('+val.slice(0,2)+') '+val.slice(2);
+  else if(val.length)out='('+val; inp.value=out;}
 
-/* envio */
 function submit(){
-  const nome=(document.getElementById('f_nome').value||'').trim();
-  const zap=(document.getElementById('f_zap').value||'').trim();
-  const email=(document.getElementById('f_email').value||'').trim();
-  const err=document.getElementById('ferr');
-  if(!nome||zap.replace(/\D/g,'').length<10){ err.textContent='Preencha nome e WhatsApp válido.'; err.style.color='#ff6b6b'; return; }
-  answers.nome=nome; answers.whatsapp=zap; answers.email=email;
-
-  const L=v=>Array.isArray(v)?(v.join(', ')||'—'):(v||'—');
-  const resumo=`Nome: ${nome}
-WhatsApp: ${zap}
-E-mail: ${email||'—'}
+  const L=x=>Array.isArray(x)?(x.join(', ')||'—'):(x||'—');
+  const resumo=`Nome: ${answers.nome}
+Empresa: ${answers.empresa}
+WhatsApp: ${answers.whatsapp}
+E-mail: ${answers.email}
 Perfil: ${L(answers.perfil)}
 Corretores: ${L(answers.corretores)}
 Vendas 6m: ${L(answers.vendas)}
@@ -269,26 +261,13 @@ Organização: ${L(answers.organizacao)}
 Trava: ${L(answers.trava)}
 Meta: ${L(answers.meta)}
 Maturidade mkt: ${L(answers.maturidade)}`;
-
-  // sucesso
-  i=Q.length; renderDone(nome);
-
-  // e-mail
-  if(WEB3FORMS_KEY){
-    const fd=new FormData();fd.append('access_key',WEB3FORMS_KEY);
-    fd.append('subject',`⚡ Diagnóstico EXPRESS — ${nome}`);fd.append('from_name','Site OUSE · Express');
-    fd.append('email',email||'sem-email@ouse.com');fd.append('nome',nome);fd.append('whatsapp',zap);fd.append('resumo',resumo);
-    fetch('https://api.web3forms.com/submit',{method:'POST',body:fd}).catch(()=>{});
-  }
-  // whatsapp
-  if(WHATSAPP_PHONE&&WHATSAPP_APIKEY){
-    const msg=encodeURIComponent('⚡ Diagnóstico EXPRESS\n\n'+resumo);
-    fetch(`https://api.callmebot.com/whatsapp.php?phone=${WHATSAPP_PHONE}&text=${msg}&apikey=${WHATSAPP_APIKEY}`,{mode:'no-cors'}).catch(()=>{});
-  }
+  i='done'; renderDone(answers.nome);
+  if(WEB3FORMS_KEY){const fd=new FormData();fd.append('access_key',WEB3FORMS_KEY);fd.append('subject',`⚡ Diagnóstico EXPRESS — ${answers.nome}`);fd.append('from_name','Site OUSE · Express');fd.append('email',answers.email);fd.append('nome',answers.nome);fd.append('empresa',answers.empresa);fd.append('whatsapp',answers.whatsapp);fd.append('resumo',resumo);fetch('https://api.web3forms.com/submit',{method:'POST',body:fd}).catch(()=>{});}
+  if(WHATSAPP_PHONE&&WHATSAPP_APIKEY){const msg=encodeURIComponent('⚡ Diagnóstico EXPRESS\n\n'+resumo);fetch(`https://api.callmebot.com/whatsapp.php?phone=${WHATSAPP_PHONE}&text=${msg}&apikey=${WHATSAPP_APIKEY}`,{mode:'no-cors'}).catch(()=>{});}
 }
 
 function renderDone(nome){
-  prog.style.width='100%'; counter.textContent=''; backBtn.classList.add('hidden'); kbd.textContent='';
+  prog.style.width='100%';counter.textContent='';backBtn.classList.add('hidden');kbd.textContent='';
   screen.innerHTML=`<div class="done-mark">✓</div>
     <div class="big-h">${nome?`Valeu, ${nome.split(' ')[0]}.<br>`:''}Recebemos <span class="o">tudo.</span></div>
     <p class="lead">A OUSE vai ler seu momento e te chamar com um diagnóstico do que destrava seu próximo nível. Fica de olho no WhatsApp.</p>
@@ -297,7 +276,6 @@ function renderDone(nome){
   gsap.from(screen.querySelectorAll('.big-h,.lead,.cta-row'),{y:24,opacity:0,duration:.6,stagger:.12,delay:.2,ease:'power3.out'});
 }
 
-/* glows drift contínuo + cursor */
 gsap.to('#gA',{scale:1.12,duration:7,ease:'sine.inOut',repeat:-1,yoyo:true,transformOrigin:'center'});
 gsap.to('#gB',{scale:1.1,duration:9,ease:'sine.inOut',repeat:-1,yoyo:true,transformOrigin:'center'});
 (function(){const d=document.querySelector('.cursor');window.addEventListener('mousemove',e=>{d.style.left=e.clientX+'px';d.style.top=e.clientY+'px';});document.addEventListener('mouseover',e=>{d.classList.toggle('hov',!!e.target.closest('[data-c],.opt,.btn,input'));});})();
