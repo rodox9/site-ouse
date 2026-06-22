@@ -123,6 +123,8 @@ const WEB3FORMS_KEY   = '6894e59b-da65-4152-bb85-fc03193c11a5';
 const WHATSAPP_PHONE  = '554195351000';
 const WHATSAPP_APIKEY = '7706708';
 const CARGOS=['Sócio / fundador','Diretor','Gestor comercial','Corretor','Marketing','Outro'];
+/* MODO TESTE: abra com ?teste=1 para navegar sem campos obrigatórios. Sem o parâmetro, o formulário exige tudo (produção). */
+const TEST_MODE = new URLSearchParams(location.search).has('teste');
 
 /* ===== TELAS: contato (1º) + 11 perguntas ===== */
 const Q = [
@@ -235,7 +237,7 @@ function attach(q){
   });
   if(q.multi){const c=document.getElementById('cont');c&&c.addEventListener('click',advance);}
 }
-function syncContinue(){const q=Q[i],c=document.getElementById('cont');if(c)c.disabled=!(answers[q.id]&&answers[q.id].length);}
+function syncContinue(){const q=Q[i],c=document.getElementById('cont');if(c)c.disabled=TEST_MODE?false:!(answers[q.id]&&answers[q.id].length);}
 
 function advance(){const f=flow(),pos=f.indexOf(i);if(pos>=f.length-1){submit();return;}animOut(()=>{i=f[pos+1];render(1);});}
 function back(){const f=flow(),pos=f.indexOf(i);if(pos>0)animOut(()=>{i=f[pos-1];render(-1);});}
@@ -246,7 +248,7 @@ backBtn.addEventListener('click',back);
 function begin(){
   const nome=v('f_nome'),empresa=v('f_empresa'),zap=v('f_zap'),email=v('f_email'),cargo=v('f_cargo');
   const err=document.getElementById('ferr');
-  if(!nome||!empresa||zap.replace(/\D/g,'').length<10||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||!cargo){
+  if(!TEST_MODE && (!nome||!empresa||zap.replace(/\D/g,'').length<10||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||!cargo)){
     err.textContent='Preencha nome, empresa, WhatsApp, e-mail válidos e o cargo.';err.style.color='#ff6b6b';return;
   }
   answers.nome=nome;answers.empresa=empresa;answers.whatsapp=zap;answers.email=email;answers.cargo=cargo;
@@ -304,6 +306,8 @@ function renderDone(nome){
 gsap.to('#gA',{scale:1.12,duration:7,ease:'sine.inOut',repeat:-1,yoyo:true,transformOrigin:'center'});
 gsap.to('#gB',{scale:1.1,duration:9,ease:'sine.inOut',repeat:-1,yoyo:true,transformOrigin:'center'});
 (function(){const d=document.querySelector('.cursor');window.addEventListener('mousemove',e=>{d.style.left=e.clientX+'px';d.style.top=e.clientY+'px';});document.addEventListener('mouseover',e=>{d.classList.toggle('hov',!!e.target.closest('[data-c],.opt,.btn,input,select'));});})();
+
+if(TEST_MODE){const tb=document.createElement('div');tb.textContent='🧪 MODO TESTE — sem campos obrigatórios';tb.style.cssText='position:fixed;top:9px;left:50%;transform:translateX(-50%);z-index:60;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:#34FF48;background:rgba(8,8,8,.85);border:1px solid rgba(52,255,72,.35);padding:3px 12px;border-radius:100px;';document.body.appendChild(tb);}
 
 render(1);
 </script>

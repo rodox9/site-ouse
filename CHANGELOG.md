@@ -12,6 +12,12 @@ _(nada pendente)_
 
 ---
 
+## [1.3.4] — 2026-06-20
+### Adicionado
+- Express — **modo teste** via `?teste=1`: navega sem campos obrigatórios (badge "🧪 MODO TESTE"). Sem o parâmetro, o formulário segue exigindo tudo (produção protegida).
+
+---
+
 ## [1.3.3] — 2026-06-20
 ### Alterado
 - Express — pergunta "De onde vêm seus clientes" enxugada para 7 canais: **Redes Sociais · Google Ads · Meta Ads · Portais · Carteira · Indicação · Outros**.
